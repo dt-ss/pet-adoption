@@ -1,0 +1,83 @@
+/* --------------------------- VARS -------------------------- */
+:root {
+    --color-primary: #F7715D;
+    --color-secondary: #01A58D;
+}
+
+@font-face {
+    font-family: Anada;
+    src: url("Anada.ttf");
+}
+
+/* --------------------------- CSS -------------------------- */
+body {
+    margin: 0;
+}
+
+body, textarea, input {
+    font-size: 24px;
+    transition: all 0.25s linear;
+}
+
+textarea, input {
+    font-size: 1em;
+}
+
+button {
+    cursor: pointer;
+    font: inherit;
+    outline: none;
+    background: none;
+}
+
+img.disabled,
+button:disabled,
+button[disabled] {
+    opacity: 0.25;
+}
+
+/* scrollbar */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/*----------------------------------------------------- GENERAL PAGE LAYOUT---------------------------*/
+div.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.container {
+    /*display: none;*/
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    flex-direction: row;
+    display: flex;
+    margin: 0;
+}

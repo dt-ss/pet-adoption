@@ -16,26 +16,30 @@ import {useAtom} from "jotai";
 import {validateEmail} from "utils";
 import {Copyright} from "../Core/Copyright";
 import {Pets} from "@mui/icons-material";
+import {useNavigate, useLocation} from "react-router-dom";
 
-export function SignIn() {
+export function SignInPage() {
 
     const [, setUser] = useAtom(userAtom);
     const [emailValid, setEmailValid] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleSubmit = (event: any) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         setUser({
+            id: 1,
             email: data.get('email'),
             password: data.get('password')
         })
+        navigate(location.state?.from?.pathname || "/")
     };
 
     return (
         <Grid container component="main" sx={{height: '100vh'}}>
 
-            {/* pets title - left */}
 
             {/* image - left side */}
             <Grid
@@ -54,6 +58,7 @@ export function SignIn() {
                     flexGrow: 1, display: {xs: 'none', md: 'flex'},
                     flexDirection: "row", alignItems: "center"
                 }}>
+                    {/* pets title */}
                     <Box sx={{display: 'flex', flexDirection: 'column', mx: "auto", marginTop: 10}}>
                         <Box display='flex' flexDirection='row'>
 

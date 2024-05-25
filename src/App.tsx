@@ -1,14 +1,26 @@
 import 'Styles/App.css';
 import React from "react";
-import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {createTheme, ThemeOptions, ThemeProvider} from '@mui/material/styles';
 import {CssBaseline} from "@mui/material";
 import {useAtom} from "jotai";
 import {darkModeAtom, userAtom} from "./Atoms";
-import {SignIn} from "Components/Pages/SignIn";
-import {Main} from "./Components/Pages/Main";
+import {SignInPage} from "Components/Pages/SignInPage";
+import {MainPage} from "./Components/Pages/MainPage";
 import ResponsiveAppBar from "./Components/Core/AppBar";
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
+import PetProfilePage from "./Components/Pages/PetProfilePage";
+import UserProfilePage from "./Components/Pages/UserProfilePage";
+import {ProtectedRoute} from "./Components/Core/ProtectedRoute";
 
-const theme = createTheme({
+
+const t: ThemeOptions = {
+    components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {}
+            }
+        }
+    },
     palette: {
         primary: {
             main: "#01A58D",
@@ -16,20 +28,11 @@ const theme = createTheme({
         secondary: {
             main: "#F7715D",
         },
-    },
-});
+    }
+}
 
-const darkTheme = createTheme({
-    palette: {
-        mode: "dark",
-        primary: {
-            main: "#01A58D",
-        },
-        secondary: {
-            main: "#F7715D",
-        },
-    },
-})
+const theme = createTheme(t);
+const darkTheme = createTheme({...t, palette: {...t.palette, mode: "dark"}})
 
 function App() {
     const [darkMode] = useAtom(darkModeAtom)
@@ -40,15 +43,27 @@ function App() {
         <ThemeProvider theme={darkMode ? darkTheme : theme}>
             <CssBaseline/>
 
-
             {/* main component */}
             {
-                !user ? <SignIn/> :
-                    <>
-                        <ResponsiveAppBar/>
-                        <Main/>
-                    </>
-
+                <Router>
+                    {/* show top bar - only in non-login pages */}
+                    {user && <ResponsiveAppBar/>}
+                    {<Routes>
+                        {/* all routes except login - protected */}
+                        <Route element={<ProtectedRoute/>}>
+                            <Route path="/" element={<MainPage/>}/>
+                            <Route path="/pet/:id" element={<PetProfilePage/>}/>
+                            <Route path="/user/:id" element={<UserProfilePage/>}/>
+                        </Route>
+                        {/* signin route */}
+                        <Route path="/signin" element={<SignInPage/>}/>
+                        {/* default route - main */}
+                        <Route
+                            path="*"
+                            element={<Navigate to="/" replace={true}/>}
+                        />
+                    </Routes>}
+                </Router>
             }
 
         </ThemeProvider>

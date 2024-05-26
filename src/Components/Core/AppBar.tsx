@@ -25,6 +25,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import {SelectChangeEvent} from '@mui/material/Select';
 import {petTypes} from "../../Model/PetModel";
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 const settings = ['Profile', 'Logout'] as const;
 type Setting = typeof settings[number];
@@ -197,7 +198,7 @@ function ResponsiveAppBar() {
                     <Logo isMobile={true}/>
 
                     {/* pages menu - desktop */}
-                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+                    <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
                             <Button
                                 component={Link}
@@ -211,32 +212,29 @@ function ResponsiveAppBar() {
                         ))}
                     </Box>
 
-                    {/* search bar */}
-                    <form style={{display: "flex", flexDirection: "row", margin:"auto"}} onSubmit={handleSearchSubmit}>
-                            <Search sx={{flexGrow: 1, mx: 2}}>
-
+                    {/* center search form */}
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                        <form style={{ display: 'flex', alignItems: 'center' }} onSubmit={handleSearchSubmit}>
+                            <Search sx={{ flexGrow: 1, mx: 2 }}>
                                 <SearchIconWrapper>
-                                    <SearchIcon/>
+                                    <SearchIcon />
                                 </SearchIconWrapper>
                                 <StyledInputBase
-                                    placeholder="Search Pets…"
-                                    inputProps={{'aria-label': 'search'}}
+                                    placeholder="Search Pet Name…"
+                                    inputProps={{ 'aria-label': 'search' }}
                                     value={search}
                                     onChange={handleSearchChange}
                                 />
-
-
                             </Search>
 
                             {/* filter button */}
-                            <Button
-                                variant="outlined"
+                            <IconButton
                                 color="inherit"
                                 onClick={handleOpenFilterMenu}
-                                sx={{mr: 2}}
+                                sx={{ mr: 2 }}
                             >
-                                Filters
-                            </Button>
+                                <FilterListIcon />
+                            </IconButton>
                             <Popover
                                 id="filter-menu"
                                 anchorEl={anchorElFilter}
@@ -247,7 +245,7 @@ function ResponsiveAppBar() {
                                     horizontal: 'left',
                                 }}
                             >
-                                <Box sx={{p: 2, minWidth: 250}}>
+                                <Box sx={{ p: 2, minWidth: 250 }}>
                                     <Typography variant="h6">Filter Pets</Typography>
                                     <Typography variant="subtitle1">Age Range</Typography>
                                     <Slider
@@ -257,7 +255,7 @@ function ResponsiveAppBar() {
                                         min={0}
                                         max={40}
                                     />
-                                    <FormControl fullWidth sx={{mt: 2}}>
+                                    <FormControl fullWidth sx={{ mt: 2 }}>
                                         <InputLabel id="pet-type-label">Pet Type</InputLabel>
                                         <Select
                                             labelId="pet-type-label"
@@ -269,27 +267,29 @@ function ResponsiveAppBar() {
                                             <MenuItem value="">
                                                 <em>None</em>
                                             </MenuItem>
-                                            {petTypes.map(t => <MenuItem value={t}>
-                                                <em>{t}</em>
+                                            {petTypes.map(t => <MenuItem key={t} value={t}>
+                                                {t}
                                             </MenuItem>)}
                                         </Select>
                                     </FormControl>
                                 </Box>
                             </Popover>
 
-                            <Button type={'submit'} variant="outlined"
-                                    color="inherit" sx={{mr: 2}}>Search</Button>
-                    </form>
+                            <Button type="submit" variant="outlined" color="inherit" sx={{ mr: 2 }}>
+                                Search
+                            </Button>
+                        </form>
+                    </Box>
 
                     {/* user avatar and settings menu */}
-                    <Box sx={{flexGrow: 0}}>
+                    <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                <Avatar alt="Remy Sharp"/>
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Avatar alt="Remy Sharp" />
                             </IconButton>
                         </Tooltip>
                         <Menu
-                            sx={{mt: '45px'}}
+                            sx={{ mt: '45px' }}
                             id="menu-appbar"
                             anchorEl={anchorElUser}
                             anchorOrigin={{

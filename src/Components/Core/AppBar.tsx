@@ -1,4 +1,3 @@
-// ResponsiveAppBar.tsx
 import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,6 +18,13 @@ import {styled, alpha} from '@mui/material/styles';
 import {userAtom} from "../../Atoms";
 import {useAtom} from "jotai";
 import {Link, useNavigate} from "react-router-dom";
+import Popover from '@mui/material/Popover';
+import Slider from '@mui/material/Slider';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import {SelectChangeEvent} from '@mui/material/Select';
+import {petTypes} from "../../Model/PetModel";
 
 const settings = ['Profile', 'Logout'] as const;
 type Setting = typeof settings[number];
@@ -92,8 +98,11 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+    const [anchorElFilter, setAnchorElFilter] = useState<null | HTMLElement>(null);
     const [user, setUser] = useAtom(userAtom);
     const [search, setSearch] = useState('');
+    const [ageRange, setAgeRange] = useState<number[]>([0, 40]);
+    const [petType, setPetType] = useState<string>('');
     const navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -102,6 +111,10 @@ function ResponsiveAppBar() {
 
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
+    };
+
+    const handleOpenFilterMenu = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElFilter(event.currentTarget);
     };
 
     const handleCloseNavMenu = () => {
@@ -114,6 +127,10 @@ function ResponsiveAppBar() {
         setAnchorElUser(null);
     };
 
+    const handleCloseFilterMenu = () => {
+        setAnchorElFilter(null);
+    };
+
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
     };
@@ -121,6 +138,14 @@ function ResponsiveAppBar() {
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         navigate(`/?query=${search}`);
+    };
+
+    const handleAgeRangeChange = (event: Event, newValue: number | number[]) => {
+        setAgeRange(newValue as number[]);
+    };
+
+    const handlePetTypeChange = (event: SelectChangeEvent) => {
+        setPetType(event.target.value as string);
     };
 
     return (
@@ -171,21 +196,6 @@ function ResponsiveAppBar() {
                     {/* logo mobile */}
                     <Logo isMobile={true}/>
 
-                    {/* search bar */}
-                    <Search sx={{flexGrow: 1, mx: 2}}>
-                        <form onSubmit={handleSearchSubmit}>
-                            <SearchIconWrapper>
-                                <SearchIcon/>
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="Search Pets…"
-                                inputProps={{'aria-label': 'search'}}
-                                value={search}
-                                onChange={handleSearchChange}
-                            />
-                        </form>
-                    </Search>
-
                     {/* pages menu - desktop */}
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
@@ -200,6 +210,76 @@ function ResponsiveAppBar() {
                             </Button>
                         ))}
                     </Box>
+
+                    {/* search bar */}
+                    <form style={{display: "flex", flexDirection: "row", margin:"auto"}} onSubmit={handleSearchSubmit}>
+                            <Search sx={{flexGrow: 1, mx: 2}}>
+
+                                <SearchIconWrapper>
+                                    <SearchIcon/>
+                                </SearchIconWrapper>
+                                <StyledInputBase
+                                    placeholder="Search Pets…"
+                                    inputProps={{'aria-label': 'search'}}
+                                    value={search}
+                                    onChange={handleSearchChange}
+                                />
+
+
+                            </Search>
+
+                            {/* filter button */}
+                            <Button
+                                variant="outlined"
+                                color="inherit"
+                                onClick={handleOpenFilterMenu}
+                                sx={{mr: 2}}
+                            >
+                                Filters
+                            </Button>
+                            <Popover
+                                id="filter-menu"
+                                anchorEl={anchorElFilter}
+                                open={Boolean(anchorElFilter)}
+                                onClose={handleCloseFilterMenu}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Box sx={{p: 2, minWidth: 250}}>
+                                    <Typography variant="h6">Filter Pets</Typography>
+                                    <Typography variant="subtitle1">Age Range</Typography>
+                                    <Slider
+                                        value={ageRange}
+                                        onChange={handleAgeRangeChange}
+                                        valueLabelDisplay="auto"
+                                        min={0}
+                                        max={40}
+                                    />
+                                    <FormControl fullWidth sx={{mt: 2}}>
+                                        <InputLabel id="pet-type-label">Pet Type</InputLabel>
+                                        <Select
+                                            labelId="pet-type-label"
+                                            id="pet-type"
+                                            value={petType}
+                                            label="Pet Type"
+                                            onChange={handlePetTypeChange}
+                                        >
+                                            <MenuItem value="">
+                                                <em>None</em>
+                                            </MenuItem>
+                                            {petTypes.map(t => <MenuItem value={t}>
+                                                <em>{t}</em>
+                                            </MenuItem>)}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+                            </Popover>
+
+                            <Button type={'submit'} variant="outlined"
+                                    color="inherit" sx={{mr: 2}}>Search</Button>
+                    </form>
 
                     {/* user avatar and settings menu */}
                     <Box sx={{flexGrow: 0}}>

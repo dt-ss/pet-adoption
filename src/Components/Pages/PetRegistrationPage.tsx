@@ -60,118 +60,109 @@ const PetRegistrationPage = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Register New Pet
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{mt: 3}}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="name"
-                        label="Pet Name"
-                        name="name"
-                        autoComplete="name"
-                        autoFocus
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <Box
-                        {...getRootProps()}
-                        sx={{
-                            border: '2px dashed #ccc',
-                            borderRadius: '5px',
-                            textAlign: 'center',
-                            padding: '20px',
-                            cursor: 'pointer',
-                            marginBottom: '16px'
-                        }}
-                    >
-                        <input {...getInputProps()} />
-                        {isDragActive ? (
-                            <p>Drop the image here ...</p>
-                        ) : (
-                            <p>Drag 'n' drop an image here, or click to select an image</p>
-                        )}
-                    </Box>
-                    {imagePreview && (
-                        <Avatar
-                            src={imagePreview as string}
-                            alt="Pet Image"
-                            sx={{width: 100, height: 100, mb: 2}}
-                        />
+        <Container>
+            <Typography variant="h4" sx={{mt: 4}}>
+                Register New Pet
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} sx={{mt: 3}}>
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="name"
+                    label="Pet Name"
+                    name="name"
+                    autoComplete="name"
+                    autoFocus
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <Box
+                    {...getRootProps()}
+                    sx={{
+                        border: '2px dashed #ccc',
+                        borderRadius: '5px',
+                        textAlign: 'center',
+                        padding: '20px',
+                        cursor: 'pointer',
+                        marginBottom: '16px'
+                    }}
+                >
+                    <input {...getInputProps()} />
+                    {isDragActive ? (
+                        <p>Drop the image here ...</p>
+                    ) : (
+                        <p>Drag 'n' drop an image here, or click to select an image</p>
                     )}
-                    {error && (
-                        <Alert severity="error" onClose={() => setError(null)} sx={{mb: 2}}>
-                            {error}
-                        </Alert>
-                    )}
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="description"
-                        label="Description"
-                        name="description"
-                        autoComplete="description"
-                        multiline
-                        rows={4}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="birthDate"
-                        label="Birth Date"
-                        name="birthDate"
-                        type="date"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        value={birthDate}
-                        onChange={(e) => setBirthDate(e.target.value)}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="type"
-                        label="Type"
-                        name="type"
-                        select
-                        value={type}
-                        onChange={(e) => setType(e.target.value as PetType)}
-                    >
-                        {petTypes.map((option) => (
-                            <MenuItem key={option} value={option}>
-                                {option}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{mt: 3, mb: 2}}
-                    >
-                        Register
-                    </Button>
                 </Box>
+                {imagePreview && (
+                    <Avatar
+                        src={imagePreview as string}
+                        alt="Pet Image"
+                        sx={{width: 100, height: 100, mb: 2}}
+                    />
+                )}
+                {error && (
+                    <Alert severity="error" onClose={() => setError(null)} sx={{mb: 2}}>
+                        {error}
+                    </Alert>
+                )}
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="description"
+                    label="Description"
+                    name="description"
+                    autoComplete="description"
+                    multiline
+                    rows={4}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="birthDate"
+                    label="Birth Date"
+                    name="birthDate"
+                    type="date"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                />
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="type"
+                    label="Type"
+                    name="type"
+                    select
+                    value={type}
+                    onChange={(e) => setType(e.target.value as PetType)}
+                >
+                    {petTypes.map((option) => (
+                        <MenuItem key={option} value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{mt: 3, mb: 2}}
+                >
+                    Register
+                </Button>
             </Box>
         </Container>
     );

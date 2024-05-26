@@ -12,7 +12,7 @@ export const MainPage = () => {
     return (
         <Grid
             container
-            spacing={4}
+            spacing={3}
             sx={{p:4}}
             direction="row"
             justifyContent={'space-between'}

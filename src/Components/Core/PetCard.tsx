@@ -23,7 +23,7 @@ const PetCard = ({pet}: { pet: PetModel }) => {
     };
 
     return (
-        <Paper elevation={3} sx={{padding: 2, borderRadius: 5}}>
+        <Paper elevation={3} sx={{p: 2}}>
             <Card elevation={0}>
                 <CardMedia
                     component="img"

@@ -162,7 +162,7 @@ function ResponsiveAppBar() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page.name} component={Link} to={page.path} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page.name}</Typography>
+                                    <Typography textAlign="center">{page.name.toUpperCase()}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -196,7 +196,7 @@ function ResponsiveAppBar() {
                                 onClick={handleCloseNavMenu}
                                 sx={{my: 2, color: 'white', display: 'block'}}
                             >
-                                {page.name}
+                                {page.name.toUpperCase()}
                             </Button>
                         ))}
                     </Box>
@@ -226,7 +226,7 @@ function ResponsiveAppBar() {
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                                    <Typography textAlign="center">{setting.toUpperCase()}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>

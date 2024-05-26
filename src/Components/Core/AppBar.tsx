@@ -1,4 +1,5 @@
-import * as React from 'react';
+// ResponsiveAppBar.tsx
+import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,6 +13,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Pets} from "@mui/icons-material";
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
+import {styled, alpha} from '@mui/material/styles';
 import {userAtom} from "../../Atoms";
 import {useAtom} from "jotai";
 import {Link, useNavigate} from "react-router-dom";
@@ -20,39 +24,77 @@ const settings = ['Profile', 'Logout'] as const;
 type Setting = typeof settings[number];
 
 type PageType = { name: string, path: string }
-const pages: PageType[] = [{name: 'main', path: '/'}] as const;
-// type Page = typeof pages[number];
+const pages: PageType[] = [
+    {name: 'main', path: '/'},
+    {name: 'add pet', path: '/register-pet'}
+] as const;
 
-const Logo = ({isMobile}: { isMobile: boolean }) => {
+const Logo = ({isMobile}: { isMobile: boolean }) => (
+    <>
+        <Pets sx={{display: {xs: isMobile ? 'flex' : 'none', md: isMobile ? 'none' : 'flex'}, mr: 1}}/>
+        <Typography
+            variant={isMobile ? "h5" : "h6"}
+            noWrap
+            component="a"
+            sx={{
+                mr: 2,
+                display: {xs: isMobile ? 'flex' : 'none', md: isMobile ? 'none' : 'flex'},
+                flexGrow: isMobile ? 1 : undefined,
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+            }}
+        >
+            PETS
+        </Typography>
+    </>
+);
 
-    return (
-        <>
-            <Pets sx={{display: {xs: isMobile ? 'flex' : 'none', md: isMobile ? 'none' : 'flex'}, mr: 1}}/>
-            <Typography
-                variant={isMobile ? "h5" : "h6"}
-                noWrap
-                component="a"
-                sx={{
-                    mr: 2,
-                    display: {xs: isMobile ? 'flex' : 'none', md: isMobile ? 'none' : 'flex'},
-                    flexGrow: isMobile ? 1 : undefined,
-                    fontWeight: 700,
-                    letterSpacing: '.3rem',
-                    color: 'inherit',
-                    textDecoration: 'none',
-                }}
-            >
-                PETS
-            </Typography>
-        </>
-    )
-}
+const Search = styled('div')(({theme}) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(1),
+        width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({theme}) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({theme}) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
+    },
+}));
 
 function ResponsiveAppBar() {
-    const [anchorElNav, setAnchorElNav] = React.useState <null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState <null | HTMLElement>(null);
-    const [user,setUser] = useAtom(userAtom)
-    const navigate = useNavigate()
+    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+    const [user, setUser] = useAtom(userAtom);
+    const [search, setSearch] = useState('');
+    const navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -67,16 +109,24 @@ function ResponsiveAppBar() {
     };
 
     const handleCloseUserMenu = (setting?: Setting) => {
-        setting === 'Logout' && setUser(null)
-        setting === 'Profile' && user && navigate(`/user/${user.id}`)
+        if (setting === 'Logout') setUser(null);
+        if (setting === 'Profile' && user) navigate(`/user/${user.id}`);
         setAnchorElUser(null);
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+    };
+
+    const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        navigate(`/?query=${search}`);
     };
 
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-
                     {/* logo desktop */}
                     <Logo isMobile={false}/>
 
@@ -105,14 +155,13 @@ function ResponsiveAppBar() {
                                 horizontal: 'left',
                             }}
                             open={Boolean(anchorElNav)}
-                            onClose={()=>handleCloseNavMenu()}
+                            onClose={handleCloseNavMenu}
                             sx={{
                                 display: {xs: 'block', md: 'none'},
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page.name} component={Link} to={page.path}
-                                          onClick={() => handleCloseNavMenu()}>
+                                <MenuItem key={page.name} component={Link} to={page.path} onClick={handleCloseNavMenu}>
                                     <Typography textAlign="center">{page.name}</Typography>
                                 </MenuItem>
                             ))}
@@ -122,6 +171,21 @@ function ResponsiveAppBar() {
                     {/* logo mobile */}
                     <Logo isMobile={true}/>
 
+                    {/* search bar */}
+                    <Search sx={{flexGrow: 1, mx: 2}}>
+                        <form onSubmit={handleSearchSubmit}>
+                            <SearchIconWrapper>
+                                <SearchIcon/>
+                            </SearchIconWrapper>
+                            <StyledInputBase
+                                placeholder="Search Pets…"
+                                inputProps={{'aria-label': 'search'}}
+                                value={search}
+                                onChange={handleSearchChange}
+                            />
+                        </form>
+                    </Search>
+
                     {/* pages menu - desktop */}
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
@@ -129,7 +193,7 @@ function ResponsiveAppBar() {
                                 component={Link}
                                 to={page.path}
                                 key={page.name}
-                                onClick={() => handleCloseNavMenu()}
+                                onClick={handleCloseNavMenu}
                                 sx={{my: 2, color: 'white', display: 'block'}}
                             >
                                 {page.name}
@@ -158,7 +222,7 @@ function ResponsiveAppBar() {
                                 horizontal: 'right',
                             }}
                             open={Boolean(anchorElUser)}
-                            onClose={()=>handleCloseUserMenu()}
+                            onClose={() => handleCloseUserMenu()}
                         >
                             {settings.map((setting) => (
                                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
@@ -167,7 +231,6 @@ function ResponsiveAppBar() {
                             ))}
                         </Menu>
                     </Box>
-
                 </Toolbar>
             </Container>
         </AppBar>

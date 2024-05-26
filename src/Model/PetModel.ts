@@ -8,8 +8,8 @@ export interface PetModel {
     type: PetType
 }
 
-export const petTypes = ['Dog', 'Cat', 'Bird', 'Fish', 'Hamster'] as const;
-type PetType = typeof petTypes[number];
+export const petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Reptile', 'Other'] as const;
+export type PetType = typeof petTypes[number];
 
 const petNames = [
     'Buddy', 'Bella', 'Charlie', 'Max', 'Luna', 'Rocky', 'Lucy', 'Milo', 'Bailey', 'Daisy',

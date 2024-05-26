@@ -11,6 +11,7 @@ import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom
 import PetProfilePage from "./Components/Pages/PetProfilePage";
 import UserProfilePage from "./Components/Pages/UserProfilePage";
 import {ProtectedRoute} from "./Components/Core/ProtectedRoute";
+import PetRegistrationPage from "./Components/Pages/PetRegistrationPage";
 
 
 const t: ThemeOptions = {
@@ -54,6 +55,7 @@ function App() {
                             <Route path="/" element={<MainPage/>}/>
                             <Route path="/pet/:id" element={<PetProfilePage/>}/>
                             <Route path="/user/:id" element={<UserProfilePage/>}/>
+                            <Route path="/register-pet" element={<PetRegistrationPage/>} />
                         </Route>
                         {/* signin route */}
                         <Route path="/signin" element={<SignInPage/>}/>

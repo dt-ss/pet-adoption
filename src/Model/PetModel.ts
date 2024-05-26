@@ -8,7 +8,8 @@ export interface PetModel {
     type: PetType
 }
 
-type PetType = 'Dog' | 'Cat' | 'Bird' | 'Fish' | 'Hamster';
+export const petTypes = ['Dog', 'Cat', 'Bird', 'Fish', 'Hamster'] as const;
+type PetType = typeof petTypes[number];
 
 const petNames = [
     'Buddy', 'Bella', 'Charlie', 'Max', 'Luna', 'Rocky', 'Lucy', 'Milo', 'Bailey', 'Daisy',
@@ -23,7 +24,7 @@ const descriptions = [
     'A loyal pet that loves spending time with its owner.'
 ];
 
-const petTypes: PetType[] = ['Dog', 'Cat', 'Bird', 'Fish', 'Hamster'];
+
 
 const randomImageUrls = [
   "https://placedog.net/410/300?random",
@@ -44,7 +45,7 @@ const randomImageUrls = [
   "https://placedog.net/409/300?random"
 ];
 
-const getRandomElement = <T, >(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const getRandomElement = (arr:any) => arr[Math.floor(Math.random() * arr.length)];
 
 const getRandomDate = (start: Date, end: Date): string => {
     const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

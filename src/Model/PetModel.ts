@@ -1,6 +1,8 @@
+import {UserModel, generateRandomMockUser} from "./UserModel";
+
 export interface PetModel {
     id: number
-    ownerId: number
+    owner: UserModel,
     name: string
     image?: string
     description: string
@@ -10,6 +12,8 @@ export interface PetModel {
 
 export const petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Reptile', 'Other'] as const;
 export type PetType = typeof petTypes[number];
+
+// -------------------------------------- Pet Mock -----------------------------------------
 
 const petNames = [
     'Buddy', 'Bella', 'Charlie', 'Max', 'Luna', 'Rocky', 'Lucy', 'Milo', 'Bailey', 'Daisy',
@@ -23,8 +27,6 @@ const descriptions = [
     'A curious pet that is always up for an adventure.',
     'A loyal pet that loves spending time with its owner.'
 ];
-
-
 
 const randomImageUrls = [
   "https://placedog.net/410/300?random",
@@ -54,7 +56,7 @@ const getRandomDate = (start: Date, end: Date): string => {
 
 const generateRandomPet = (id: number): PetModel => ({
     id,
-    ownerId: Math.floor(Math.random() * 100) + 1,
+    owner: generateRandomMockUser(),
     name: getRandomElement(petNames),
     image: getRandomElement(randomImageUrls),
     description: getRandomElement(descriptions),

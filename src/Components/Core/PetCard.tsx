@@ -14,8 +14,9 @@ import animalPrints from "Pictures/animal-prints.png";
 import {FavoriteBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
 import {calculateAge} from "../../utils";
+import {Box} from "@mui/material";
 
-const PetCard = ({pet}: { pet: PetModel }) => {
+const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boolean }) => {
     const [like, setLike] = useState(false);
 
     const handleLike = () => {
@@ -36,21 +37,42 @@ const PetCard = ({pet}: { pet: PetModel }) => {
                         {pet.name}
                     </Typography>
                     <Typography color="text.secondary">
-                        Age: {calculateAge(pet.birthDate)} years
+                        <b>Type:</b> {pet.type}
                     </Typography>
-                    <Typography color="text.secondary" sx={{marginTop: 1}}>
+                    <Typography color="text.secondary">
+                        <b>Age:</b> {calculateAge(pet.birthDate)} years
+                    </Typography>
+                    <Typography color="text.secondary">
                         {pet.description}
                     </Typography>
+
+                    {/* Owner Details */}
+                    <Box mt={2}>
+                        <Typography variant="h6" component="div">
+                            Owner Details
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Name: {pet.owner.name} {pet.owner.family}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Phone: {pet.owner.phone}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Address: {pet.owner.address}
+                        </Typography>
+                    </Box>
+
                 </CardContent>
-                <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <CardActions sx={{display: 'flex', justifyContent: 'space-between'}}>
                     <Button color="primary" onClick={handleLike}
                             startIcon={like ? <FavoriteIcon/> : <FavoriteBorder/>}>
                         Save
                     </Button>
-                    <Button component={Link} to={`/pet/${pet.id}`}
-                        variant={'contained'} color={'primary'}>
-                        View Profile
-                    </Button>
+                    {profileLink &&
+                        <Button component={Link} to={`/pet/${pet.id}`}
+                                variant={'contained'} color={'primary'}>
+                            View Profile
+                        </Button>}
                 </CardActions>
             </Card>
         </Paper>

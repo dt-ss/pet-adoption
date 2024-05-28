@@ -4,6 +4,7 @@ import {TextField, Button, Container, Typography, Box, MenuItem, Avatar, Alert} 
 import {useNavigate} from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
 import {PetModelMock, petTypes, PetType} from "../../Model/PetModel";
+import {generateRandomMockUser} from "../../Model/UserModel";
 
 const PetRegistrationPage = () => {
     const [name, setName] = useState('');
@@ -48,6 +49,7 @@ const PetRegistrationPage = () => {
             id: Date.now(), // This is just for the example; typically, the server would generate the ID
             ownerId: 1, // This would be the ID of the logged-in user
             name,
+            owner: generateRandomMockUser(),
             image: imagePreview as string, // You would send this to your server
             description,
             birthDate,

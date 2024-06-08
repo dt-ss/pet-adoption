@@ -13,10 +13,10 @@ import Typography from '@mui/material/Typography';
 import dogs from 'Pictures/image-dog-login.jpg';
 import {userAtom} from "Atoms";
 import {useAtom} from "jotai";
-import {validateEmail} from "utils";
+import {request, validateEmail} from "utils";
 import {Copyright} from "../Core/Copyright";
 import {Pets} from "@mui/icons-material";
-import {useNavigate, useLocation} from "react-router-dom";
+import {useNavigate, useLocation, Link as RouterLink} from "react-router-dom";
 
 export function SignInPage() {
 
@@ -26,15 +26,18 @@ export function SignInPage() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = async (event: any) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setUser({
-            id: 1,
-            email: data.get('email'),
-            password: data.get('password')
-        })
-        navigate(location.state?.from?.pathname || "/")
+        try{
+            const r = await request(`users/login/${data.get("email")}?password=${data.get("password")}`)
+            if(!r.ok) {throw new Error()}
+            setUser(await r.json());
+            navigate(location.state?.from?.pathname || "/")
+        }
+        catch {
+             alert("Email or password invalid")
+        }
     };
 
     return (
@@ -155,13 +158,8 @@ export function SignInPage() {
 
                         {/* forgot and signup buttons */}
                         <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    {"Forgot password?"}
-                                </Link>
-                            </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link component={RouterLink} variant={"body2"} to="/signup">
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

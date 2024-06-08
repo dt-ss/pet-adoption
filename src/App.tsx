@@ -59,6 +59,7 @@ function App() {
                         </Route>
                         {/* signin route */}
                         <Route path="/signin" element={<SignInPage/>}/>
+                        <Route path="/signup" element={<UserProfilePage/>}/>
                         {/* default route - main */}
                         <Route
                             path="*"

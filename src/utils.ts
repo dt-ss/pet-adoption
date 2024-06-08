@@ -20,3 +20,13 @@ export const calculateAge = (birthDate: string) => {
     }
     return age;
 };
+
+export const request = (input: RequestInfo | URL, init?: RequestInit) => {
+    return fetch(`http://${window.location.hostname}:8080/api/${input}`, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            ...init?.headers,
+        }, ...init
+    });
+}

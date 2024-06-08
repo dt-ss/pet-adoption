@@ -1,23 +1,28 @@
 // UserProfilePage.tsx
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Container, Typography, Box, TextField, Button, Avatar, Grid, Switch} from '@mui/material';
 import {useAtom} from "jotai";
 import {darkModeAtom} from "../../Atoms";
+import {UserModel} from "../../Model/UserModel";
+import {request} from "../../utils";
+import {useParams} from "react-router-dom";
 
-const UserProfilePage: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: () => any }) => {
+    const {id} = useParams<{ id: string }>();
+    const [user, setUser] = useState<UserModel | {}>({});
     const [darkMode, setDarkMode] = useAtom(darkModeAtom)
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+    useEffect(() => {
+        if (id) {
+            request(`users/${id}`).then(r => r.json().then(d => setUser(d)))
+        }
+    }, [id])
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
+        setUser(last => ({...last, email: e.target.value}));
     };
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(e.target.value);
+        setUser(last => ({...last, password: e.target.value}));
     };
 
     const handleDarkModeToggle = () => {
@@ -25,26 +30,23 @@ const UserProfilePage: React.FC = () => {
     };
 
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setName(e.target.value);
+        setUser(last => ({...last, name: e.target.value}));
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPhone(e.target.value);
+        setUser(last => ({...last, phone: e.target.value}));
     };
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAddress(e.target.value);
+        setUser(last => ({...last, address: e.target.value}));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Implement logic to update user details
-        console.log('Updated email:', email);
-        console.log('Updated password:', password);
-        console.log('Dark mode:', darkMode);
-        console.log('Updated name:', name);
-        console.log('Updated phone:', phone);
-        console.log('Updated address:', address);
+        request(`users`, {
+            method: "POST",
+            body: JSON.stringify(user)
+        }).then(onSubmit && onSubmit()).catch(e => console.error(e))
     };
 
     // Mock data for liked pets
@@ -59,7 +61,7 @@ const UserProfilePage: React.FC = () => {
         <Container>
             <Box sx={{my: 4}}>
                 <Typography variant="h4" gutterBottom>
-                    User Profile Settings
+                    {id? `${"name" in user ? user.name : ""} Profile Settings` : "Register"}
                 </Typography>
             </Box>
             <Box sx={{mb: 4}}>
@@ -71,7 +73,7 @@ const UserProfilePage: React.FC = () => {
                         label="Email"
                         fullWidth
                         variant="outlined"
-                        value={email}
+                        value={"email" in user ? user.email : ""}
                         onChange={handleEmailChange}
                         sx={{marginBottom: 2}}
                     />
@@ -80,7 +82,7 @@ const UserProfilePage: React.FC = () => {
                         fullWidth
                         variant="outlined"
                         type="password"
-                        value={password}
+                        value={"password" in user ? user.password : ""}
                         onChange={handlePasswordChange}
                         sx={{marginBottom: 2}}
                     />
@@ -105,7 +107,7 @@ const UserProfilePage: React.FC = () => {
                         label="Name"
                         fullWidth
                         variant="outlined"
-                        value={name}
+                        value={"name" in user ? user.name : ""}
                         onChange={handleNameChange}
                         sx={{marginBottom: 2}}
                     />
@@ -113,7 +115,7 @@ const UserProfilePage: React.FC = () => {
                         label="Phone"
                         fullWidth
                         variant="outlined"
-                        value={phone}
+                        value={"phone" in user ? user.phone : ""}
                         onChange={handlePhoneChange}
                         sx={{marginBottom: 2}}
                     />
@@ -121,7 +123,7 @@ const UserProfilePage: React.FC = () => {
                         label="Address"
                         fullWidth
                         variant="outlined"
-                        value={address}
+                        value={"address" in user ? user.address : ""}
                         onChange={handleAddressChange}
                         sx={{marginBottom: 2}}
                     />

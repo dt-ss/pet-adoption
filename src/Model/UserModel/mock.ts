@@ -1,12 +1,4 @@
-export interface UserModel {
-    id: string | number;
-    name?: string;
-    family?: string;
-    email: any;
-    password: any;
-    phone?: string;
-    address?: string;
-}
+import {UserModel} from "./index";
 
 function getRandomElement<T>(array: T[]): T {
     return array[Math.floor(Math.random() * array.length)];

@@ -1,17 +1,7 @@
-import {UserModel, generateRandomMockUser} from "./UserModel";
+import {PetModel, petTypes} from "./index";
+import {generateRandomMockUser} from "../UserModel/mock";
 
-export interface PetModel {
-    id: number
-    owner: UserModel,
-    name: string
-    image?: string
-    description: string
-    birthDate: string
-    type: PetType
-}
 
-export const petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Reptile', 'Other'] as const;
-export type PetType = typeof petTypes[number];
 
 // -------------------------------------- Pet Mock -----------------------------------------
 

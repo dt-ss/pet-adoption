@@ -1,3 +1,5 @@
+const API_PORT = 8080
+
 /**
  * code to validated string entered is a valid email by REGEX
  * @param email
@@ -22,7 +24,7 @@ export const calculateAge = (birthDate: string) => {
 };
 
 export const request = (input: RequestInfo | URL, init?: RequestInit) => {
-    return fetch(`http://${window.location.hostname}:8080/api/${input}`, {
+    return fetch(`http://${window.location.hostname}:${API_PORT}/api/${input}`, {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',

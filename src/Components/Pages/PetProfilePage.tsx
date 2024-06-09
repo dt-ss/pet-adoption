@@ -1,21 +1,21 @@
 // PetProfilePage.tsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
-import {Typography} from '@mui/material';
-import {PetModelMock} from "../../Model/PetModel";
 import PetCard from "../Core/PetCard";
+import {request} from "../../utils";
+import {PetModel} from "../../Model/PetModel";
 
 
 const PetProfilePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
-    const pet = id ? PetModelMock.find((pet) => pet.id === parseInt(id, 10)) : null;
+    const [pet, setPet] = useState<PetModel>();
+    useEffect(() => {
+        id && request(`pets/${id}`).then(r => r.json().then(p => setPet(p)))
+    }, [id])
 
-    if (!pet) {
-        return <Typography variant="h6">Pet not found</Typography>;
-    }
 
     return (
-        <PetCard pet={pet} profileLink={false}/>
+        pet && <PetCard pet={pet} profileLink={false}/>
     );
 };
 

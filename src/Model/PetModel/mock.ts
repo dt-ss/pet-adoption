@@ -1,4 +1,4 @@
-import {PetModel, petTypes} from "./index";
+import {PetModel, PetType} from "./index";
 import {generateRandomMockUser} from "../UserModel/mock";
 
 
@@ -51,7 +51,7 @@ const generateRandomPet = (id: number): PetModel => ({
     image: getRandomElement(randomImageUrls),
     description: getRandomElement(descriptions),
     birthDate: getRandomDate(new Date(2010, 0, 1), new Date(2021, 12, 31)),
-    type: getRandomElement(petTypes),
+    type_id: getRandomElement(Object.keys(PetType).map((_,i)=>i)),
 });
 
 const generatePets = (count: number): PetModel[] => Array.from({length: count}, (_, index) => generateRandomPet(index + 1));

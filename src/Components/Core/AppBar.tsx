@@ -24,8 +24,8 @@ import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import {SelectChangeEvent} from '@mui/material/Select';
-import {petTypes} from "../../Model/PetModel";
 import FilterListIcon from '@mui/icons-material/FilterList';
+import {PetType} from "../../Model/PetModel";
 
 const settings = ['Profile', 'Logout'] as const;
 type Setting = typeof settings[number];
@@ -267,9 +267,10 @@ function ResponsiveAppBar() {
                                             <MenuItem value="">
                                                 <em>None</em>
                                             </MenuItem>
-                                            {petTypes.map(t => <MenuItem key={t} value={t}>
-                                                {t}
-                                            </MenuItem>)}
+                                            {Object.keys(PetType).map((t) =>
+                                                <MenuItem key={t} value={t}>
+                                                    {t}
+                                                </MenuItem>)}
                                         </Select>
                                     </FormControl>
                                 </Box>

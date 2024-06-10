@@ -3,7 +3,7 @@ import React, {useState, useCallback} from 'react';
 import {TextField, Button, Container, Typography, Box, MenuItem, Avatar, Alert} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
-import {petTypes, PetType} from "../../Model/PetModel";
+import {PetType} from "../../Model/PetModel";
 import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
 import {request} from "../../utils";
@@ -14,7 +14,7 @@ const PetRegistrationPage = () => {
     const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
     const [description, setDescription] = useState('');
     const [birthDate, setBirthDate] = useState('');
-    const [type, setType] = useState<PetType>('Other');
+    const [typeId, setTypeId] = useState<PetType>(PetType.Other);
     const [user] = useAtom(userAtom)
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -46,6 +46,15 @@ const PetRegistrationPage = () => {
             return;
         }
 
+        console.log({
+            ownerId: user?.id,
+            name,
+            image: imagePreview as string,
+            description,
+            birthDate,
+            type_id: typeId,
+        })
+
 
         request('pets',{method:"POST", body:JSON.stringify({
             ownerId: user?.id,
@@ -53,7 +62,7 @@ const PetRegistrationPage = () => {
             image: imagePreview as string,
             description,
             birthDate,
-            type,
+            type_id: typeId,
         })}).then(()=>navigate('/'))
 
     };
@@ -145,11 +154,11 @@ const PetRegistrationPage = () => {
                     label="Type"
                     name="type"
                     select
-                    value={type}
-                    onChange={(e) => setType(e.target.value as PetType)}
+                    value={typeId}
+                    onChange={(e) => setTypeId(parseInt(e.target.value))}
                 >
-                    {petTypes.map((option) => (
-                        <MenuItem key={option} value={option}>
+                    {Object.keys(PetType).map((option, index) => (
+                        <MenuItem key={index} value={index}>
                             {option}
                         </MenuItem>
                     ))}

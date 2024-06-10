@@ -1,6 +1,15 @@
 import {UserModel} from "../UserModel";
-export const petTypes = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Reptile', 'Other'] as const;
-export type PetType = typeof petTypes[number];
+
+export enum PetType {
+    Dog = 1,
+    Cat,
+    Bird,
+    Rabbit,
+    Fish,
+    Reptile,
+    Other
+}
+
 export interface PetModel {
     id: number
     owner: UserModel,
@@ -8,5 +17,5 @@ export interface PetModel {
     image?: string
     description: string
     birthDate: string
-    type: PetType
+    type_id: PetType
 }

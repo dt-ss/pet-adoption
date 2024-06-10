@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Grid} from "@mui/material";
-import {PetModel} from "../../Model/PetModel";
+import {PetModel, PetType} from "../../Model/PetModel";
 import PetCard from "../Core/PetCard";
 import {useSearchParams} from "react-router-dom";
 import {calculateAge, request} from "../../utils";
@@ -34,7 +34,7 @@ export const MainPage = () => {
                     p.name.toLowerCase().includes(query?.toLowerCase() || '')
                     && (!maxAge || calculateAge(p.birthDate) <= parseInt(maxAge))
                     && (!minAge || calculateAge(p.birthDate) >= parseInt(minAge))
-                    && (!petType || petType === p.type)
+                    && (!petType || petType === PetType[p.type_id])
                 ).map(elem => (
                     <Grid item sm={12} md={6} lg={4} xl={3} key={elem.id}>
                         <PetCard pet={elem}/>

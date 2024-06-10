@@ -9,7 +9,7 @@ import {
     CardActions,
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import {PetModel} from "../../Model/PetModel";
+import {PetModel, PetType} from "../../Model/PetModel";
 import animalPrints from "Pictures/animal-prints.png";
 import {FavoriteBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
@@ -37,7 +37,7 @@ const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boole
                         {pet.name}
                     </Typography>
                     <Typography color="text.secondary">
-                        <b>Type:</b> {pet.type}
+                        <b>Type:</b> {PetType[pet.type_id]}
                     </Typography>
                     <Typography color="text.secondary">
                         <b>Age:</b> {calculateAge(pet.birthDate)} years

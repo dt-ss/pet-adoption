@@ -29,8 +29,12 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
         setDarkMode((prevDarkMode) => !prevDarkMode);
     };
 
-    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser(last => ({...last, name: e.target.value}));
+    const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUser(last => ({...last, first_name: e.target.value}));
+    };
+
+    const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUser(last => ({...last, last_name: e.target.value}));
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,11 +108,19 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
-                        label="Name"
+                        label="First Name"
                         fullWidth
                         variant="outlined"
-                        value={"name" in user ? user.name : ""}
-                        onChange={handleNameChange}
+                        value={"first_name" in user ? user.first_name : ""}
+                        onChange={handleFirstNameChange}
+                        sx={{marginBottom: 2}}
+                    />
+                    <TextField
+                        label="Last Name"
+                        fullWidth
+                        variant="outlined"
+                        value={"last_name" in user ? user.last_name : ""}
+                        onChange={handleLastNameChange}
                         sx={{marginBottom: 2}}
                     />
                     <TextField

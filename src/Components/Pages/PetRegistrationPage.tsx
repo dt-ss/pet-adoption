@@ -6,8 +6,9 @@ import {useDropzone} from 'react-dropzone';
 import {PetType} from "../../Model/PetModel";
 import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
-import {request} from "../../utils";
+import {enumToObject, request} from "../../utils";
 
+const petTypeObject = enumToObject(PetType);
 const PetRegistrationPage = () => {
     const [name, setName] = useState('');
     const [image, setImage] = useState<File | null>(null);
@@ -18,8 +19,6 @@ const PetRegistrationPage = () => {
     const [user] = useAtom(userAtom)
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
-
-    const petTypeValues = Object.keys(PetType).filter(key => isNaN(Number(key)));
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -47,15 +46,6 @@ const PetRegistrationPage = () => {
             setError('Please upload an image');
             return;
         }
-
-        console.log({
-            ownerId: user?.id,
-            name,
-            image: imagePreview as string,
-            description,
-            birthDate,
-            type_id: typeId,
-        })
 
 
         request('pets',{method:"POST", body:JSON.stringify({
@@ -158,9 +148,9 @@ const PetRegistrationPage = () => {
                     value={typeId}
                     onChange={(e) => setTypeId(parseInt(e.target.value))}
                 >
-                    {petTypeValues.map((option, index) => (
-                        <MenuItem key={index} value={index+1}>
-                            {option}
+                    {Object.keys(petTypeObject).map((key) => (
+                        <MenuItem key={key} value={petTypeObject[key]}>
+                            {key}
                         </MenuItem>
                     ))}
                 </TextField>

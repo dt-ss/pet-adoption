@@ -32,3 +32,13 @@ export const request = (input: RequestInfo | URL, init?: RequestInit) => {
         }, ...init
     });
 }
+
+export function enumToObject(enumObj: any): { [key: string]: number } {
+    const result: { [key: string]: number } = {};
+    for (const key in enumObj) {
+        if (isNaN(Number(key))) {
+            result[key] = enumObj[key];
+        }
+    }
+    return result;
+}

@@ -19,6 +19,8 @@ const PetRegistrationPage = () => {
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    const petTypeValues = Object.keys(PetType).filter(key => isNaN(Number(key)));
+
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         setImage(file);
@@ -62,11 +64,10 @@ const PetRegistrationPage = () => {
             image: imagePreview as string,
             description,
             birthDate,
-            type_id: typeId,
+            typeId,
         })}).then(()=>navigate('/'))
 
     };
-
     return (
         <Container>
             <Typography variant="h4" sx={{mt: 4}}>
@@ -157,8 +158,8 @@ const PetRegistrationPage = () => {
                     value={typeId}
                     onChange={(e) => setTypeId(parseInt(e.target.value))}
                 >
-                    {Object.keys(PetType).map((option, index) => (
-                        <MenuItem key={index} value={index}>
+                    {petTypeValues.map((option, index) => (
+                        <MenuItem key={index} value={index+1}>
                             {option}
                         </MenuItem>
                     ))}

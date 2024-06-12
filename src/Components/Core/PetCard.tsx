@@ -52,7 +52,7 @@ const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boole
                             Owner Details
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            Name: {pet.owner.first_name} {pet.owner.last_name}
+                            Name: {pet.owner.firstName} {pet.owner.lastName}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Phone: {pet.owner.phone}

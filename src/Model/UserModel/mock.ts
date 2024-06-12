@@ -54,8 +54,8 @@ function generateRandomAddress(): string {
 export function generateRandomMockUser(): UserModel {
     return {
         id: Math.floor(Math.random() * 10000),  // Random number as ID
-        first_name: generateRandomName(),             // Random actual name
-        last_name: generateRandomFamilyName(),     // Random actual family name
+        firstName: generateRandomName(),             // Random actual name
+        lastName: generateRandomFamilyName(),     // Random actual family name
         email: generateRandomEmail(),           // Random email
         password: generateRandomString(12),     // Random password of length 12
         phone: generateRandomPhoneNumber(),     // Random phone number of length 10

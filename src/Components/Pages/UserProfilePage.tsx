@@ -4,13 +4,14 @@ import {Container, Typography, Box, TextField, Button, Avatar, Grid, Switch} fro
 import {useAtom} from "jotai";
 import {darkModeAtom} from "../../Atoms";
 import {UserModel} from "../../Model/UserModel";
-import {request} from "../../utils";
-import {useParams} from "react-router-dom";
+import {request, validateEmail} from "../../utils";
+import {useNavigate, useParams} from "react-router-dom";
 
-const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: () => any }) => {
+const UserProfilePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [user, setUser] = useState<UserModel | {}>({});
     const [darkMode, setDarkMode] = useAtom(darkModeAtom)
+    const navigate = useNavigate()
     useEffect(() => {
         if (id) {
             request(`users/${id}`).then(r => r.json().then(d => setUser(d)))
@@ -30,11 +31,11 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
     };
 
     const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser(last => ({...last, first_name: e.target.value}));
+        setUser(last => ({...last, firstName: e.target.value}));
     };
 
     const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser(last => ({...last, last_name: e.target.value}));
+        setUser(last => ({...last, lastName: e.target.value}));
     };
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +51,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
         request(`users`, {
             method: "POST",
             body: JSON.stringify(user)
-        }).then(onSubmit && onSubmit()).catch(e => console.error(e))
+        }).then(()=>navigate('/')).catch(e => console.error(e))
     };
 
     // Mock data for liked pets
@@ -61,6 +62,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
         {id: 4, name: 'Daisy', image: 'https://placedog.net/103/103?random'},
     ];
 
+    // @ts-ignore
     return (
         <Container>
             <Box sx={{my: 4}}>
@@ -78,6 +80,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                         fullWidth
                         variant="outlined"
                         value={"email" in user ? user.email : ""}
+                        error={!("email" in user && user.email && validateEmail(user.email))}
                         onChange={handleEmailChange}
                         sx={{marginBottom: 2}}
                     />
@@ -87,6 +90,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                         variant="outlined"
                         type="password"
                         value={"password" in user ? user.password : ""}
+                        error={!("password" in user && user.password && user.password.length > 7)}
                         onChange={handlePasswordChange}
                         sx={{marginBottom: 2}}
                     />
@@ -111,16 +115,18 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                         label="First Name"
                         fullWidth
                         variant="outlined"
-                        value={"first_name" in user ? user.first_name : ""}
+                        value={"firstName" in user ? user.firstName : ""}
                         onChange={handleFirstNameChange}
+                        error={!("firstName" in user && user.firstName && user.firstName.length > 2)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
                         label="Last Name"
                         fullWidth
                         variant="outlined"
-                        value={"last_name" in user ? user.last_name : ""}
+                        value={"lastName" in user ? user.lastName : ""}
                         onChange={handleLastNameChange}
+                        error={!("lastName" in user && user.lastName && user.lastName.length > 2)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -129,6 +135,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                         variant="outlined"
                         value={"phone" in user ? user.phone : ""}
                         onChange={handlePhoneChange}
+                        error={!("phone" in user && user.phone && !isNaN(Number(user.phone)) && user.phone.length === 10)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -137,6 +144,7 @@ const UserProfilePage: React.FC = ({onSubmit}: { user?: UserModel, onSubmit?: ()
                         variant="outlined"
                         value={"address" in user ? user.address : ""}
                         onChange={handleAddressChange}
+                        error={!("address" in user)}
                         sx={{marginBottom: 2}}
                     />
                     <Button type="submit" variant="contained" color="primary">

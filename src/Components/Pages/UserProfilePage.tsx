@@ -12,6 +12,26 @@ const UserProfilePage: React.FC = () => {
     const [user, setUser] = useState<UserModel | {}>({});
     const [darkMode, setDarkMode] = useAtom(darkModeAtom)
     const navigate = useNavigate()
+    const [emailError, setEmailError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [firstNameError, setFirstNameError] = useState(false);
+    const [lastNameError, setLastNameError] = useState(false);
+    const [phoneError, setPhoneError] = useState(false);
+    const [addressError, setAddressError] = useState(false);
+
+    const validateFields = (data: any) => {
+        setEmailError(!data.email || !validateEmail(data.email));
+        setPasswordError(!data.password || data.password.length <= 7);
+        setFirstNameError(!data.firstName || data.firstName.length <= 2);
+        setLastNameError(!data.lastName || data.lastName.length <= 2);
+        setPhoneError(!data.phone || isNaN(Number(data.phone)) || data.phone.length !== 10);
+        setAddressError(!data.address);
+    };
+    useEffect(() => validateFields(user), [user])
+
+    const isFormValid = !emailError && !passwordError && !firstNameError && !lastNameError && !phoneError && !addressError;
+
+
     useEffect(() => {
         if (id) {
             request(`users/${id}`).then(r => r.json().then(d => setUser(d)))
@@ -51,7 +71,7 @@ const UserProfilePage: React.FC = () => {
         request(`users`, {
             method: "POST",
             body: JSON.stringify(user)
-        }).then(()=>navigate('/')).catch(e => console.error(e))
+        }).then(() => navigate('/')).catch(e => console.error(e))
     };
 
     // Mock data for liked pets
@@ -62,12 +82,11 @@ const UserProfilePage: React.FC = () => {
         {id: 4, name: 'Daisy', image: 'https://placedog.net/103/103?random'},
     ];
 
-    // @ts-ignore
     return (
         <Container>
             <Box sx={{my: 4}}>
                 <Typography variant="h4" gutterBottom>
-                    {id? `${"name" in user ? user.name : ""} Profile Settings` : "Register"}
+                    {id ? `${"name" in user ? user.name : ""} Profile Settings` : "Register"}
                 </Typography>
             </Box>
             <Box sx={{mb: 4}}>
@@ -80,7 +99,7 @@ const UserProfilePage: React.FC = () => {
                         fullWidth
                         variant="outlined"
                         value={"email" in user ? user.email : ""}
-                        error={!("email" in user && user.email && validateEmail(user.email))}
+                        error={emailError}
                         onChange={handleEmailChange}
                         sx={{marginBottom: 2}}
                     />
@@ -90,7 +109,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         type="password"
                         value={"password" in user ? user.password : ""}
-                        error={!("password" in user && user.password && user.password.length > 7)}
+                        error={passwordError}
                         onChange={handlePasswordChange}
                         sx={{marginBottom: 2}}
                     />
@@ -117,7 +136,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"firstName" in user ? user.firstName : ""}
                         onChange={handleFirstNameChange}
-                        error={!("firstName" in user && user.firstName && user.firstName.length > 2)}
+                        error={firstNameError}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -126,7 +145,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"lastName" in user ? user.lastName : ""}
                         onChange={handleLastNameChange}
-                        error={!("lastName" in user && user.lastName && user.lastName.length > 2)}
+                        error={lastNameError}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -135,7 +154,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"phone" in user ? user.phone : ""}
                         onChange={handlePhoneChange}
-                        error={!("phone" in user && user.phone && !isNaN(Number(user.phone)) && user.phone.length === 10)}
+                        error={phoneError}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -144,10 +163,10 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"address" in user ? user.address : ""}
                         onChange={handleAddressChange}
-                        error={!("address" in user)}
+                        error={addressError}
                         sx={{marginBottom: 2}}
                     />
-                    <Button type="submit" variant="contained" color="primary">
+                    <Button type="submit" variant="contained" color="primary" disabled={!isFormValid}>
                         Save Changes
                     </Button>
                 </form>
@@ -167,6 +186,7 @@ const UserProfilePage: React.FC = () => {
             </Box>
         </Container>
     );
+
 };
 
 export default UserProfilePage;

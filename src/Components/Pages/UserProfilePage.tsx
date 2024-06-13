@@ -10,26 +10,21 @@ import {useNavigate, useParams} from "react-router-dom";
 const UserProfilePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [user, setUser] = useState<UserModel | {}>({});
+    const [userError, setUserError] = useState({});
     const [darkMode, setDarkMode] = useAtom(darkModeAtom)
     const navigate = useNavigate()
-    const [emailError, setEmailError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [firstNameError, setFirstNameError] = useState(false);
-    const [lastNameError, setLastNameError] = useState(false);
-    const [phoneError, setPhoneError] = useState(false);
-    const [addressError, setAddressError] = useState(false);
 
     const validateFields = (data: any) => {
-        setEmailError(!data.email || !validateEmail(data.email));
-        setPasswordError(!data.password || data.password.length <= 7);
-        setFirstNameError(!data.firstName || data.firstName.length <= 2);
-        setLastNameError(!data.lastName || data.lastName.length <= 2);
-        setPhoneError(!data.phone || isNaN(Number(data.phone)) || data.phone.length !== 10);
-        setAddressError(!data.address);
+        setUserError(last => ({...last, email: !data.email || !validateEmail(data.email)}));
+        setUserError(last => ({...last, password: !data.password || data.password.length <= 7}));
+        setUserError(last => ({...last, firstName: !data.firstName || data.firstName.length <= 2}));
+        setUserError(last => ({...last, lastName: !data.lastName || data.lastName.length <= 2}));
+        setUserError(last => ({...last, phone: !data.phone || isNaN(Number(data.phone)) || data.phone.length !== 10}));
+        setUserError(last => ({...last, address: !data.address}));
     };
     useEffect(() => validateFields(user), [user])
 
-    const isFormValid = !emailError && !passwordError && !firstNameError && !lastNameError && !phoneError && !addressError;
+    const isFormValid = Object.keys(userError).map((k): string => userError[k as keyof typeof userError]).filter(v => v).length === 0;
 
 
     useEffect(() => {
@@ -99,7 +94,7 @@ const UserProfilePage: React.FC = () => {
                         fullWidth
                         variant="outlined"
                         value={"email" in user ? user.email : ""}
-                        error={emailError}
+                        error={!("email" in userError) || !!(userError.email)}
                         onChange={handleEmailChange}
                         sx={{marginBottom: 2}}
                     />
@@ -109,7 +104,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         type="password"
                         value={"password" in user ? user.password : ""}
-                        error={passwordError}
+                        error={!("password" in userError) || !!(userError.password)}
                         onChange={handlePasswordChange}
                         sx={{marginBottom: 2}}
                     />
@@ -136,7 +131,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"firstName" in user ? user.firstName : ""}
                         onChange={handleFirstNameChange}
-                        error={firstNameError}
+                        error={!("firstName" in userError) || !!(userError.firstName)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -145,7 +140,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"lastName" in user ? user.lastName : ""}
                         onChange={handleLastNameChange}
-                        error={lastNameError}
+                        error={!("lastName" in userError) || !!(userError.lastName)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -154,7 +149,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"phone" in user ? user.phone : ""}
                         onChange={handlePhoneChange}
-                        error={phoneError}
+                        error={!("phone" in userError) || !!(userError.phone)}
                         sx={{marginBottom: 2}}
                     />
                     <TextField
@@ -163,7 +158,7 @@ const UserProfilePage: React.FC = () => {
                         variant="outlined"
                         value={"address" in user ? user.address : ""}
                         onChange={handleAddressChange}
-                        error={addressError}
+                        error={!("address" in userError) || !!(userError.address)}
                         sx={{marginBottom: 2}}
                     />
                     <Button type="submit" variant="contained" color="primary" disabled={!isFormValid}>

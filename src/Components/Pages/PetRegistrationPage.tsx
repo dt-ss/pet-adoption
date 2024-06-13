@@ -1,31 +1,30 @@
 // pages/PetRegistrationPage.tsx
-import React, {useState, useCallback} from 'react';
-import {TextField, Button, Container, Typography, Box, MenuItem, Avatar, Alert} from '@mui/material';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Avatar, Box, Button, Container, MenuItem, TextField, Typography} from '@mui/material';
 import {useNavigate} from 'react-router-dom';
 import {useDropzone} from 'react-dropzone';
-import {PetType} from "../../Model/PetModel";
+import {PetModel, PetType} from "../../Model/PetModel";
 import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
 import {enumToObject, request} from "../../utils";
 
 const petTypeObject = enumToObject(PetType);
 const PetRegistrationPage = () => {
-    const [name, setName] = useState('');
     const [image, setImage] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(null);
-    const [description, setDescription] = useState('');
-    const [birthDate, setBirthDate] = useState('');
-    const [typeId, setTypeId] = useState<PetType>(PetType.Other);
+    const [error, setError] = useState<PetModel | {}>({});
+    const [pet, setPet] = useState<PetModel | {}>({typeId: PetType.Other});
     const [user] = useAtom(userAtom)
-    const [error, setError] = useState<string | null>(null);
+    const [imageError, setImageError] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    const isFormValid = Object.keys(error).map((k): string => error[k as keyof typeof error]).filter(v => v).length === 0;
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         setImage(file);
         const reader = new FileReader();
         reader.onloadend = () => {
-            setImagePreview(reader.result);
+            setPet(last => ({...last, image: reader.result as string}));
         };
         reader.readAsDataURL(file);
     }, []);
@@ -36,28 +35,33 @@ const PetRegistrationPage = () => {
             'image/*': []
         },
         maxFiles: 1,
-        onDropRejected: () => setError('File type not accepted or too many files')
+        onDropRejected: () => setImageError('File type not accepted or too many files')
     });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (!image) {
-            setError('Please upload an image');
+            setImageError('Please upload an image');
             return;
         }
 
 
-        request('pets',{method:"POST", body:JSON.stringify({
-            ownerId: user?.id,
-            name,
-            image: imagePreview as string,
-            description,
-            birthDate,
-            typeId,
-        })}).then(()=>navigate('/'))
+        request('pets', {method: "POST", body: JSON.stringify({...pet, ownerId: user?.id})}).then(() => navigate('/'))
 
     };
+
+    useEffect(() => {
+        setError(last => ({
+            ...last,
+            description: !("description" in pet && pet.description && pet.description.length > 2)
+        }))
+        setError(last => ({...last, name: !("name" in pet && pet.name && pet.name.length > 2)}))
+        setError(last => ({...last, birthDate: !("birthDate" in pet && pet.birthDate && pet.birthDate.length)}))
+        setError(last => ({...last, image: !("image" in pet && pet.image && pet.image.length)}))
+        setError(last => ({...last, typeId: !("typeId" in pet && pet.typeId)}))
+    }, [pet])
+
     return (
         <Container>
             <Typography variant="h4" sx={{mt: 4}}>
@@ -74,11 +78,13 @@ const PetRegistrationPage = () => {
                     name="name"
                     autoComplete="name"
                     autoFocus
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={"name" in pet ? pet.name : ""}
+                    error={!("name" in error) || !!(error.name)}
+                    onChange={(e) => setPet(last => ({...last, name: e.target.value}))}
                 />
                 <Box
                     {...getRootProps()}
+                    color={!("image" in error) || !!(error.image) ? 'error.main' : 'primary.main'}
                     sx={{
                         border: '2px dashed #ccc',
                         borderRadius: '5px',
@@ -95,16 +101,16 @@ const PetRegistrationPage = () => {
                         <p>Drag 'n' drop an image here, or click to select an image</p>
                     )}
                 </Box>
-                {imagePreview && (
+                {"image" in pet && pet.image && (
                     <Avatar
-                        src={imagePreview as string}
+                        src={pet.image}
                         alt="Pet Image"
                         sx={{width: 100, height: 100, mb: 2}}
                     />
                 )}
-                {error && (
-                    <Alert severity="error" onClose={() => setError(null)} sx={{mb: 2}}>
-                        {error}
+                {imageError && (
+                    <Alert severity="error" onClose={() => setImageError(null)} sx={{mb: 2}}>
+                        {imageError}
                     </Alert>
                 )}
                 <TextField
@@ -118,8 +124,9 @@ const PetRegistrationPage = () => {
                     autoComplete="description"
                     multiline
                     rows={4}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={"description" in pet ? pet.description : ""}
+                    error={!("description" in error) || !!(error.description)}
+                    onChange={(e) => setPet(last => ({...last, description: e.target.value}))}
                 />
                 <TextField
                     variant="outlined"
@@ -133,8 +140,9 @@ const PetRegistrationPage = () => {
                     InputLabelProps={{
                         shrink: true,
                     }}
-                    value={birthDate}
-                    onChange={(e) => setBirthDate(e.target.value)}
+                    value={"birthDate" in pet ? pet.birthDate : ""}
+                    error={!("birthDate" in error) || !!(error.birthDate)}
+                    onChange={(e) => setPet(last => ({...last, birthDate: e.target.value}))}
                 />
                 <TextField
                     variant="outlined"
@@ -145,8 +153,9 @@ const PetRegistrationPage = () => {
                     label="Type"
                     name="type"
                     select
-                    value={typeId}
-                    onChange={(e) => setTypeId(parseInt(e.target.value))}
+                    value={"typeId" in pet ? pet.typeId : ""}
+                    error={!("typeId" in error) || !!(error.typeId)}
+                    onChange={(e) => setPet(last => ({...last, typeId: parseInt(e.target.value)}))}
                 >
                     {Object.keys(petTypeObject).map((key) => (
                         <MenuItem key={key} value={petTypeObject[key]}>
@@ -157,6 +166,7 @@ const PetRegistrationPage = () => {
                 <Button
                     type="submit"
                     fullWidth
+                    disabled={!isFormValid}
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
                 >

@@ -34,7 +34,7 @@ export const MainPage = () => {
                     p.name.toLowerCase().includes(query?.toLowerCase() || '')
                     && (!maxAge || calculateAge(p.birthDate) <= parseInt(maxAge))
                     && (!minAge || calculateAge(p.birthDate) >= parseInt(minAge))
-                    && (!petType || petType === PetType[p.type_id])
+                    && (!petType || petType === PetType[p.typeId])
                 ).map(elem => (
                     <Grid item sm={12} md={6} lg={4} xl={3} key={elem.id}>
                         <PetCard pet={elem}/>

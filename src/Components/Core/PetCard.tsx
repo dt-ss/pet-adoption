@@ -37,7 +37,7 @@ const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boole
                         {pet.name}
                     </Typography>
                     <Typography color="text.secondary">
-                        <b>Type:</b> {PetType[pet.type_id]}
+                        <b>Type:</b> {PetType[pet.typeId]}
                     </Typography>
                     <Typography color="text.secondary">
                         <b>Age:</b> {calculateAge(pet.birthDate)} years

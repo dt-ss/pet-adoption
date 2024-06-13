@@ -2,7 +2,8 @@ const API_PORT = 8080
 
 /**
  * code to validated string entered is a valid email by REGEX
- * @param email
+ * @param email email as string to check
+ * @return true if valid, false otherwise
  */
 export const validateEmail = (email: any) => {
     return String(email)
@@ -12,6 +13,11 @@ export const validateEmail = (email: any) => {
         );
 };
 
+/**
+ * calculates a pet's age by birth date
+ * @param birthDate birth date as string format
+ * @return age as number
+ */
 export const calculateAge = (birthDate: string) => {
     const birth = new Date(birthDate);
     const today = new Date();
@@ -23,6 +29,11 @@ export const calculateAge = (birthDate: string) => {
     return age;
 };
 
+/**
+ * generate a formatted request to the server by endpoint prefix, ip and port
+ * @param input
+ * @param init
+ */
 export const request = (input: RequestInfo | URL, init?: RequestInit) => {
     return fetch(`http://${window.location.hostname}:${API_PORT}/api/${input}`, {
         headers: {
@@ -33,6 +44,10 @@ export const request = (input: RequestInfo | URL, init?: RequestInit) => {
     });
 }
 
+/**
+ * generates a json object from numeric enum
+ * @param enumObj
+ */
 export function enumToObject(enumObj: any): { [key: string]: number } {
     const result: { [key: string]: number } = {};
     for (const key in enumObj) {

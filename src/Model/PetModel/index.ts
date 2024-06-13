@@ -17,5 +17,5 @@ export interface PetModel {
     image?: string
     description: string
     birthDate: string
-    type_id: PetType
+    typeId: PetType
 }

@@ -4,6 +4,10 @@ import {useAtom} from "jotai/index";
 import {userAtom} from "../../Atoms";
 
 
+/**
+ * generic route to be viewed only when user connected, when not - redirect to login page
+ * @constructor
+ */
 export const ProtectedRoute: React.FC = () => {
     const [user] = useAtom(userAtom)
     const location = useLocation()

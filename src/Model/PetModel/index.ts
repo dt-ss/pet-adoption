@@ -18,4 +18,5 @@ export interface PetModel {
     description: string
     birthDate: string
     typeId: PetType
+    type?: { type: string, id: PetType }
 }

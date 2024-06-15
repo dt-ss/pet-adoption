@@ -2,6 +2,11 @@ import Typography, {TypographyProps} from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import React from "react";
 
+/**
+ * bottom copyright component
+ * @param props
+ * @constructor
+ */
 export function Copyright(props: TypographyProps) {
     return (
         <Typography

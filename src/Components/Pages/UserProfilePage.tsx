@@ -63,10 +63,10 @@ const UserProfilePage: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        request(`users`, {
-            method: "POST",
+        request(id ? `users/${id}` : `users`, {
+            method: id ? "PUT" : "POST",
             body: JSON.stringify(user)
-        }).then(() => navigate('/')).catch(e => console.error(e))
+        }).then(() => navigate('/')).catch(e => alert(e))
     };
 
     // Mock data for liked pets

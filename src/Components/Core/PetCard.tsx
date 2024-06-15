@@ -9,18 +9,41 @@ import {
     CardActions,
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import {PetModel, PetType} from "../../Model/PetModel";
+import {PetModel} from "../../Model/PetModel";
 import animalPrints from "Pictures/animal-prints.png";
 import {FavoriteBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
-import {calculateAge} from "../../utils";
+import {calculateAge, request} from "../../utils";
 import {Box} from "@mui/material";
+import {useAtom} from "jotai";
+import {userAtom} from "../../Atoms";
 
-const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boolean }) => {
-    const [like, setLike] = useState(false);
+/**
+ * pet card component - used at main page on small cards and at pet view card
+ * @param pet pet data
+ * @param isSaved is pet saved for this user
+ * @constructor
+ */
+const PetCard = ({pet, isSaved}: {
+    pet: PetModel,
+    isSaved: boolean,
+    profileLink?: boolean
+}) => {
+    const [user] = useAtom(userAtom)
+    const [like, setLike] = useState(isSaved);
 
+    /**
+     * handle like button click
+     */
     const handleLike = () => {
-        setLike(last => !last);
+        if (like) {
+            request(`savedPets/user/${user?.id}/pet/${pet.id}`, {method: "DELETE"}).then(r => setLike(false))
+        } else {
+            request('savedPets', {
+                method: "POST",
+                body: JSON.stringify({userId: user?.id, petId: pet.id})
+            }).then(r => setLike(true))
+        }
     };
 
     return (
@@ -33,11 +56,13 @@ const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boole
                     alt={`${pet.name}'s photo`}
                 />
                 <CardContent>
+
+                    {/* pet details */}
                     <Typography gutterBottom variant="h4" component="div">
                         {pet.name}
                     </Typography>
                     <Typography color="text.secondary">
-                        <b>Type:</b> {PetType[pet.typeId]}
+                        <b>Type:</b> {pet.type?.type}
                     </Typography>
                     <Typography color="text.secondary">
                         <b>Age:</b> {calculateAge(pet.birthDate)} years
@@ -64,15 +89,18 @@ const PetCard = ({pet, profileLink = true}: { pet: PetModel, profileLink?: boole
 
                 </CardContent>
                 <CardActions sx={{display: 'flex', justifyContent: 'space-between'}}>
+
+                    {/* save button (like) */}
                     <Button color="primary" onClick={handleLike}
                             startIcon={like ? <FavoriteIcon/> : <FavoriteBorder/>}>
                         Save
                     </Button>
-                    {profileLink &&
-                        <Button component={Link} to={`/pet/${pet.id}`}
-                                variant={'contained'} color={'primary'}>
-                            View Profile
-                        </Button>}
+
+                    {/* view profile button */}
+                    <Button component={Link} to={`/pet/${pet.id}`}
+                            variant={'contained'} color={'primary'}>
+                        View Profile
+                    </Button>
                 </CardActions>
             </Card>
         </Paper>

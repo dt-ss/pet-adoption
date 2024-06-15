@@ -12,6 +12,7 @@ import PetProfilePage from "./Components/Pages/PetProfilePage";
 import UserProfilePage from "./Components/Pages/UserProfilePage";
 import {ProtectedRoute} from "./Components/Core/ProtectedRoute";
 import PetRegistrationPage from "./Components/Pages/PetRegistrationPage";
+import {Copyright} from "./Components/Core/Copyright";
 
 
 const t: ThemeOptions = {
@@ -32,9 +33,14 @@ const t: ThemeOptions = {
     }
 }
 
+// themes objects
 const theme = createTheme(t);
 const darkTheme = createTheme({...t, palette: {...t.palette, mode: "dark"}})
 
+/**
+ * main application component - shows the requested route
+ * @constructor
+ */
 function App() {
     const [darkMode] = useAtom(darkModeAtom)
     const [user] = useAtom(userAtom)
@@ -55,7 +61,7 @@ function App() {
                             <Route path="/" element={<MainPage/>}/>
                             <Route path="/pet/:id" element={<PetProfilePage/>}/>
                             <Route path="/user/:id" element={<UserProfilePage/>}/>
-                            <Route path="/register-pet" element={<PetRegistrationPage/>} />
+                            <Route path="/register-pet" element={<PetRegistrationPage/>}/>
                         </Route>
                         {/* signin route */}
                         <Route path="/signin" element={<SignInPage/>}/>
@@ -68,6 +74,9 @@ function App() {
                     </Routes>}
                 </Router>
             }
+
+            {/* copyright bottom bar */}
+            <Copyright/>
 
         </ThemeProvider>
     );

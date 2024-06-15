@@ -26,16 +26,29 @@ import InputLabel from '@mui/material/InputLabel';
 import {SelectChangeEvent} from '@mui/material/Select';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import {PetType} from "../../Model/PetModel";
+import {enumToObject} from "../../utils";
 
+
+// object used at pet type dropdown
+const petTypeObject =  enumToObject(PetType)
+
+// settings options list
 const settings = ['Profile', 'Logout'] as const;
 type Setting = typeof settings[number];
 
+// pages list
 type PageType = { name: string, path: string }
 const pages: PageType[] = [
     {name: 'main', path: '/'},
     {name: 'add pet', path: '/register-pet'}
 ] as const;
 
+
+/**
+ * logo component - mobile version or not
+ * @param isMobile
+ * @constructor
+ */
 const Logo = ({isMobile}: { isMobile: boolean }) => (
     <>
         <Pets sx={{display: {xs: isMobile ? 'flex' : 'none', md: isMobile ? 'none' : 'flex'}, mr: 1}}/>
@@ -58,6 +71,7 @@ const Logo = ({isMobile}: { isMobile: boolean }) => (
     </>
 );
 
+// search bar style
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -73,6 +87,7 @@ const Search = styled('div')(({theme}) => ({
     },
 }));
 
+// search icon style
 const SearchIconWrapper = styled('div')(({theme}) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
@@ -83,6 +98,7 @@ const SearchIconWrapper = styled('div')(({theme}) => ({
     justifyContent: 'center',
 }));
 
+// search input style
 const StyledInputBase = styled(InputBase)(({theme}) => ({
     color: 'inherit',
     '& .MuiInputBase-input': {
@@ -96,6 +112,10 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
+/**
+ * top app bar base component
+ * @constructor
+ */
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -267,8 +287,8 @@ function ResponsiveAppBar() {
                                             <MenuItem value="">
                                                 <em>None</em>
                                             </MenuItem>
-                                            {Object.keys(PetType).map((t) =>
-                                                <MenuItem key={t} value={t}>
+                                            {Object.keys(petTypeObject).map((t) =>
+                                                <MenuItem key={t} value={petTypeObject[t]}>
                                                     {t}
                                                 </MenuItem>)}
                                         </Select>

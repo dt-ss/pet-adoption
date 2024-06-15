@@ -8,17 +8,43 @@ import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
 import {enumToObject, request} from "../../utils";
 
+// pet type object to be used at dropdown
 const petTypeObject = enumToObject(PetType);
-const PetRegistrationPage = () => {
+
+/**
+ * pet registration / edit component
+ * @param currentPet if provided - editing this pet
+ * @constructor
+ */
+const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPet?: PetModel | {} }) => {
     const [image, setImage] = useState<File | null>(null);
     const [error, setError] = useState<PetModel | {}>({});
-    const [pet, setPet] = useState<PetModel | {}>({typeId: PetType.Other});
+    const [pet, setPet] = useState<PetModel | {}>(currentPet);
     const [user] = useAtom(userAtom)
     const [imageError, setImageError] = useState<string | null>(null);
     const navigate = useNavigate();
 
+    // pull data from current pet if provided
+    useEffect(() => {
+
+        // pull image
+        if ("image" in currentPet && currentPet.image) {
+            fetch(currentPet.image).then(r => r.blob().then(d => setImage(new File([d], 'name'))))
+        }
+        // pull type
+        if ("type" in currentPet && currentPet.type) {
+            setPet(p => ({...p, typeId: currentPet.type?.id}))
+        }
+    }, [currentPet]);
+
+
+    // form valid if all pet options are valid
     const isFormValid = Object.keys(error).map((k): string => error[k as keyof typeof error]).filter(v => v).length === 0;
 
+
+    /**
+     * on image drop callback
+     */
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         setImage(file);
@@ -29,6 +55,9 @@ const PetRegistrationPage = () => {
         reader.readAsDataURL(file);
     }, []);
 
+    /**
+     * image dropzone effects
+     */
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
         onDrop,
         accept: {
@@ -38,6 +67,9 @@ const PetRegistrationPage = () => {
         onDropRejected: () => setImageError('File type not accepted or too many files')
     });
 
+    /**
+     * submit callback function
+     */
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -46,11 +78,18 @@ const PetRegistrationPage = () => {
             return;
         }
 
-
-        request('pets', {method: "POST", body: JSON.stringify({...pet, ownerId: user?.id})}).then(() => navigate('/'))
+        // put / post pet data if editing or registering
+        request("id" in pet ? `pets/${pet.id}` : 'pets',
+            {
+                method: "id" in pet ? "PUT" : "POST",
+                body: JSON.stringify({...pet, ownerId: user?.id})
+            }).then(() => navigate('/'))
 
     };
 
+    /**
+     * callback to constrict pet change to error object
+     */
     useEffect(() => {
         setError(last => ({
             ...last,
@@ -64,10 +103,13 @@ const PetRegistrationPage = () => {
 
     return (
         <Container>
+            {/* title*/}
             <Typography variant="h4" sx={{mt: 4}}>
-                Register New Pet
+                {"id" in pet ? "Edit " + pet.name : "Register New Pet"}
             </Typography>
+            {/*form*/}
             <Box component="form" onSubmit={handleSubmit} sx={{mt: 3}}>
+                {/* name input field */}
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -82,6 +124,7 @@ const PetRegistrationPage = () => {
                     error={!("name" in error) || !!(error.name)}
                     onChange={(e) => setPet(last => ({...last, name: e.target.value}))}
                 />
+                {/* image upload box */}
                 <Box
                     {...getRootProps()}
                     color={!("image" in error) || !!(error.image) ? 'error.main' : 'primary.main'}
@@ -113,6 +156,7 @@ const PetRegistrationPage = () => {
                         {imageError}
                     </Alert>
                 )}
+                {/* description input field */}
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -128,6 +172,7 @@ const PetRegistrationPage = () => {
                     error={!("description" in error) || !!(error.description)}
                     onChange={(e) => setPet(last => ({...last, description: e.target.value}))}
                 />
+                {/* birth date input field */}
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -144,6 +189,7 @@ const PetRegistrationPage = () => {
                     error={!("birthDate" in error) || !!(error.birthDate)}
                     onChange={(e) => setPet(last => ({...last, birthDate: e.target.value}))}
                 />
+                {/* types dropdown */}
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -163,6 +209,7 @@ const PetRegistrationPage = () => {
                         </MenuItem>
                     ))}
                 </TextField>
+                {/* submit button */}
                 <Button
                     type="submit"
                     fullWidth
@@ -170,7 +217,7 @@ const PetRegistrationPage = () => {
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
                 >
-                    Register
+                    {"id" in pet ? "Submit" : "Register"}
                 </Button>
             </Box>
         </Container>

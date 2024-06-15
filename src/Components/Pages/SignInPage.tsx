@@ -18,6 +18,11 @@ import {Copyright} from "../Core/Copyright";
 import {Pets} from "@mui/icons-material";
 import {useNavigate, useLocation, Link as RouterLink} from "react-router-dom";
 
+
+/**
+ * sign in page component - this is the first page that appears
+ * @constructor
+ */
 export function SignInPage() {
 
     const [, setUser] = useAtom(userAtom);

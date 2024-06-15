@@ -22,9 +22,10 @@ import {userAtom} from "../../Atoms";
  * pet card component - used at main page on small cards and at pet view card
  * @param pet pet data
  * @param isSaved is pet saved for this user
+ * @param profileLink if set - showing profile page link
  * @constructor
  */
-const PetCard = ({pet, isSaved}: {
+const PetCard = ({pet, isSaved, profileLink=true}: {
     pet: PetModel,
     isSaved: boolean,
     profileLink?: boolean
@@ -91,16 +92,16 @@ const PetCard = ({pet, isSaved}: {
                 <CardActions sx={{display: 'flex', justifyContent: 'space-between'}}>
 
                     {/* save button (like) */}
-                    <Button color="primary" onClick={handleLike}
-                            startIcon={like ? <FavoriteIcon/> : <FavoriteBorder/>}>
+                    {user && <Button color="primary" onClick={handleLike}
+                                     startIcon={like ? <FavoriteIcon/> : <FavoriteBorder/>}>
                         Save
-                    </Button>
+                    </Button>}
 
                     {/* view profile button */}
-                    <Button component={Link} to={`/pet/${pet.id}`}
-                            variant={'contained'} color={'primary'}>
+                    {user && profileLink && <Button component={Link} to={`/pet/${pet.id}`}
+                                     variant={'contained'} color={'primary'}>
                         View Profile
-                    </Button>
+                    </Button>}
                 </CardActions>
             </Card>
         </Paper>

@@ -29,10 +29,10 @@ export const MainPage = () => {
     useEffect(() => {
         request('pets').then(r => r.json().then(d => {
             setPets(d);
-            request(`savedPets/user/${user?.id}`).then(r => r.json().then(d => {
+            user ? request(`savedPets/user/${user?.id}`).then(r => r.json().then(d => {
                 setSavedPets(d)
                 setLoading(false)
-            }))
+            })) : setLoading(false)
         }))
     }, [user])
 

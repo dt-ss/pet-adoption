@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -17,7 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {styled, alpha} from '@mui/material/styles';
 import {userAtom} from "../../Atoms";
 import {useAtom} from "jotai";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import Popover from '@mui/material/Popover';
 import Slider from '@mui/material/Slider';
 import Select from '@mui/material/Select';
@@ -30,18 +30,10 @@ import {enumToObject} from "../../utils";
 
 
 // object used at pet type dropdown
-const petTypeObject =  enumToObject(PetType)
-
-// settings options list
-const settings = ['Profile', 'Logout'] as const;
-type Setting = typeof settings[number];
+const petTypeObject = enumToObject(PetType)
 
 // pages list
 type PageType = { name: string, path: string }
-const pages: PageType[] = [
-    {name: 'main', path: '/'},
-    {name: 'add pet', path: '/register-pet'}
-] as const;
 
 
 /**
@@ -125,6 +117,15 @@ function ResponsiveAppBar() {
     const [ageRange, setAgeRange] = useState<number[]>([0, 40]);
     const [petType, setPetType] = useState<string>('');
     const navigate = useNavigate();
+    const location = useLocation()
+    const [pages, setPages] = useState<PageType[]>([]);
+
+    useEffect(() => {
+        setPages([
+            {name: 'main', path: '/'},
+            ...(user ? [{name: 'add pet', path: '/register-pet'}] : [])
+        ])
+    }, [user]);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -142,9 +143,10 @@ function ResponsiveAppBar() {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = (setting?: Setting) => {
+    const handleCloseUserMenu = (setting?: string) => {
         if (setting === 'Logout') setUser(null);
         if (setting === 'Profile' && user) navigate(`/user/${user.id}`);
+        if (setting === 'Login') navigate(`/signin`);
         setAnchorElUser(null);
     };
 
@@ -170,6 +172,7 @@ function ResponsiveAppBar() {
     };
 
     return (
+        location.pathname !== '/signin' &&
         <AppBar position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -233,15 +236,15 @@ function ResponsiveAppBar() {
                     </Box>
 
                     {/* center search form */}
-                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-                        <form style={{ display: 'flex', alignItems: 'center' }} onSubmit={handleSearchSubmit}>
-                            <Search sx={{ flexGrow: 1, mx: 2 }}>
+                    <Box sx={{flexGrow: 1, display: 'flex', justifyContent: 'center'}}>
+                        <form style={{display: 'flex', alignItems: 'center'}} onSubmit={handleSearchSubmit}>
+                            <Search sx={{flexGrow: 1, mx: 2}}>
                                 <SearchIconWrapper>
-                                    <SearchIcon />
+                                    <SearchIcon/>
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     placeholder="Search Pet Name…"
-                                    inputProps={{ 'aria-label': 'search' }}
+                                    inputProps={{'aria-label': 'search'}}
                                     value={search}
                                     onChange={handleSearchChange}
                                 />
@@ -251,9 +254,9 @@ function ResponsiveAppBar() {
                             <IconButton
                                 color="inherit"
                                 onClick={handleOpenFilterMenu}
-                                sx={{ mr: 2 }}
+                                sx={{mr: 2}}
                             >
-                                <FilterListIcon />
+                                <FilterListIcon/>
                             </IconButton>
                             <Popover
                                 id="filter-menu"
@@ -265,7 +268,7 @@ function ResponsiveAppBar() {
                                     horizontal: 'left',
                                 }}
                             >
-                                <Box sx={{ p: 2, minWidth: 250 }}>
+                                <Box sx={{p: 2, minWidth: 250}}>
                                     <Typography variant="h6">Filter Pets</Typography>
                                     <Typography variant="subtitle1">Age Range</Typography>
                                     <Slider
@@ -275,7 +278,7 @@ function ResponsiveAppBar() {
                                         min={0}
                                         max={40}
                                     />
-                                    <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <FormControl fullWidth sx={{mt: 2}}>
                                         <InputLabel id="pet-type-label">Pet Type</InputLabel>
                                         <Select
                                             labelId="pet-type-label"
@@ -296,21 +299,21 @@ function ResponsiveAppBar() {
                                 </Box>
                             </Popover>
 
-                            <Button type="submit" variant="outlined" color="inherit" sx={{ mr: 2 }}>
+                            <Button type="submit" variant="outlined" color="inherit" sx={{mr: 2}}>
                                 Search
                             </Button>
                         </form>
                     </Box>
 
                     {/* user avatar and settings menu */}
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{flexGrow: 0}}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" />
+                            <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
+                                <Avatar alt="Remy Sharp"/>
                             </IconButton>
                         </Tooltip>
                         <Menu
-                            sx={{ mt: '45px' }}
+                            sx={{mt: '45px'}}
                             id="menu-appbar"
                             anchorEl={anchorElUser}
                             anchorOrigin={{
@@ -325,7 +328,7 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={() => handleCloseUserMenu()}
                         >
-                            {settings.map((setting) => (
+                            {(user ? ['Profile', 'Logout'] : ['Login']).map((setting) => (
                                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                     <Typography textAlign="center">{setting.toUpperCase()}</Typography>
                                 </MenuItem>

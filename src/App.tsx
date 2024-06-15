@@ -3,7 +3,7 @@ import React from "react";
 import {createTheme, ThemeOptions, ThemeProvider} from '@mui/material/styles';
 import {CssBaseline} from "@mui/material";
 import {useAtom} from "jotai";
-import {darkModeAtom, userAtom} from "./Atoms";
+import {darkModeAtom} from "./Atoms";
 import {SignInPage} from "Components/Pages/SignInPage";
 import {MainPage} from "./Components/Pages/MainPage";
 import ResponsiveAppBar from "./Components/Core/AppBar";
@@ -43,8 +43,6 @@ const darkTheme = createTheme({...t, palette: {...t.palette, mode: "dark"}})
  */
 function App() {
     const [darkMode] = useAtom(darkModeAtom)
-    const [user] = useAtom(userAtom)
-
 
     return (
         <ThemeProvider theme={darkMode ? darkTheme : theme}>
@@ -54,11 +52,11 @@ function App() {
             {
                 <Router>
                     {/* show top bar - only in non-login pages */}
-                    {user && <ResponsiveAppBar/>}
+                    <ResponsiveAppBar/>
                     {<Routes>
+                        <Route path="/" element={<MainPage/>}/>
                         {/* all routes except login - protected */}
                         <Route element={<ProtectedRoute/>}>
-                            <Route path="/" element={<MainPage/>}/>
                             <Route path="/pet/:id" element={<PetProfilePage/>}/>
                             <Route path="/user/:id" element={<UserProfilePage/>}/>
                             <Route path="/register-pet" element={<PetRegistrationPage/>}/>
@@ -72,11 +70,11 @@ function App() {
                             element={<Navigate to="/" replace={true}/>}
                         />
                     </Routes>}
+                    {/* copyright bottom bar */}
+                    <Copyright/>
                 </Router>
             }
 
-            {/* copyright bottom bar */}
-            <Copyright/>
 
         </ThemeProvider>
     );

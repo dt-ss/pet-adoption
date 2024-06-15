@@ -6,12 +6,19 @@ import {darkModeAtom} from "../../Atoms";
 import {UserModel} from "../../Model/UserModel";
 import {request, validateEmail} from "../../utils";
 import {useNavigate, useParams} from "react-router-dom";
+import {PetModel} from "../../Model/PetModel";
+import {SavedPet} from "../../Model/SavedPet";
 
+/**
+ * user profile page - registration or profile edit
+ * @constructor
+ */
 const UserProfilePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [user, setUser] = useState<UserModel | {}>({});
     const [userError, setUserError] = useState({});
     const [darkMode, setDarkMode] = useAtom(darkModeAtom)
+    const [likedPets, setLikedPets] = useState<Record<number, PetModel>>({});
     const navigate = useNavigate()
 
     const validateFields = (data: any) => {
@@ -29,7 +36,14 @@ const UserProfilePage: React.FC = () => {
 
     useEffect(() => {
         if (id) {
+            // pull user data
             request(`users/${id}`).then(r => r.json().then(d => setUser(d)))
+
+            // pull liked pets
+            request(`savedPets/user/${id}`).then(r => r.json().then(d =>
+                d.forEach((e: SavedPet) => request(`pets/${e.petId}`).then(r =>
+                    r.json().then((d: PetModel) => setLikedPets(last => ({...last, [d.id]: d})))))
+            ))
         }
     }, [id])
 
@@ -69,13 +83,6 @@ const UserProfilePage: React.FC = () => {
         }).then(() => navigate('/')).catch(e => alert(e))
     };
 
-    // Mock data for liked pets
-    const likedPets = [
-        {id: 1, name: 'Buddy', image: 'https://placedog.net/100/100?random'},
-        {id: 2, name: 'Luna', image: 'https://placedog.net/101/101?random'},
-        {id: 3, name: 'Max', image: 'https://placedog.net/102/102?random'},
-        {id: 4, name: 'Daisy', image: 'https://placedog.net/103/103?random'},
-    ];
 
     return (
         <Container>
@@ -170,11 +177,14 @@ const UserProfilePage: React.FC = () => {
                 <Typography variant="h6" gutterBottom>
                     Liked Pets
                 </Typography>
+
+                {/* show liked pets */}
                 <Grid container spacing={2}>
-                    {likedPets.map((pet) => (
-                        <Grid item key={pet.id}>
-                            <Avatar alt={pet.name} src={pet.image} sx={{width: 80, height: 80, marginBottom: 1}}/>
-                            <Typography variant="body2" align="center">{pet.name}</Typography>
+                    {Object.keys(likedPets).map((k: any) => (
+                        <Grid item key={likedPets[k].id}>
+                            <Avatar alt={likedPets[k].name} src={likedPets[k].image}
+                                    sx={{width: 80, height: 80, marginBottom: 1}}/>
+                            <Typography variant="body2" align="center">{likedPets[k].name}</Typography>
                         </Grid>
                     ))}
                 </Grid>

@@ -34,7 +34,7 @@ const PetProfilePage: React.FC = () => {
         pet && savedPets ?
             pet.owner.id === user?.id ?
                 <PetRegistrationPage currentPet={pet}/> :
-                <PetCard isSaved={!!savedPets.filter(e => e.petId === pet.id).length} pet={pet}
+                <PetCard isLiked={!!savedPets.filter(e => e.petId === pet.id).length} pet={pet}
                          profileLink={false}/> : <></>
     );
 };

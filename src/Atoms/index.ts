@@ -1,6 +1,6 @@
-import {atom} from 'jotai';
 import {UserModel} from "../Model/UserModel";
+import {atomWithStorage} from "jotai/utils";
 
 
-export const userAtom = atom<UserModel | null>(null);
-export const darkModeAtom = atom<boolean>(false);
+export const userAtom = atomWithStorage<UserModel | null>('user',null);
+export const darkModeAtom = atomWithStorage<boolean>('darkMode', false);

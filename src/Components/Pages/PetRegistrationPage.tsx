@@ -7,6 +7,7 @@ import {PetModel, PetType} from "../../Model/PetModel";
 import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
 import {enumToObject, request} from "../../utils";
+import {Delete} from "@mui/icons-material";
 
 // pet type object to be used at dropdown
 const petTypeObject = enumToObject(PetType);
@@ -23,6 +24,7 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
     const [user] = useAtom(userAtom)
     const [imageError, setImageError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const editing = "id" in pet;
 
     // pull data from current pet if provided
     useEffect(() => {
@@ -67,6 +69,10 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
         onDropRejected: () => setImageError('File type not accepted or too many files')
     });
 
+    const onDelete = () => {
+        "id" in pet && request(`pets/${pet.id}`, {method: "DELETE"}).then(() => navigate("/"))
+    }
+
     /**
      * submit callback function
      */
@@ -79,9 +85,9 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
         }
 
         // put / post pet data if editing or registering
-        request("id" in pet ? `pets/${pet.id}` : 'pets',
+        request(editing ? `pets/${pet.id}` : 'pets',
             {
-                method: "id" in pet ? "PUT" : "POST",
+                method: editing ? "PUT" : "POST",
                 body: JSON.stringify({...pet, ownerId: user?.id})
             }).then(() => navigate('/'))
 
@@ -103,10 +109,20 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
 
     return (
         <Container>
-            {/* title*/}
-            <Typography variant="h4" sx={{mt: 4}}>
-                {"id" in pet ? "Edit " + pet.name : "Register New Pet"}
-            </Typography>
+            {/* title row */}
+            <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+
+                {/* title text */}
+                <Typography variant="h4" sx={{mt: 4}}>
+                    {editing ? "Edit " + pet.name : "Register New Pet"}
+                </Typography>
+
+                {/* delete icon */}
+                {editing &&
+                    <Box sx={{marginLeft: "auto", marginRight: 0}}>
+                        <Button color={'error'} onClick={onDelete} startIcon={<Delete/>}>Delete</Button>
+                    </Box>}
+            </Box>
             {/*form*/}
             <Box component="form" onSubmit={handleSubmit} sx={{mt: 3}}>
                 {/* name input field */}
@@ -217,7 +233,7 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
                     variant="contained"
                     sx={{mt: 3, mb: 2}}
                 >
-                    {"id" in pet ? "Submit" : "Register"}
+                    {editing ? "Submit" : "Register"}
                 </Button>
             </Box>
         </Container>

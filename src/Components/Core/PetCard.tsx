@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Paper,
     Typography,
@@ -25,13 +25,17 @@ import {userAtom} from "../../Atoms";
  * @param profileLink if set - showing profile page link
  * @constructor
  */
-const PetCard = ({pet, isSaved, profileLink=true}: {
+const PetCard = ({pet, isLiked, profileLink=true}: {
     pet: PetModel,
-    isSaved: boolean,
+    isLiked: boolean,
     profileLink?: boolean
 }) => {
     const [user] = useAtom(userAtom)
-    const [like, setLike] = useState(isSaved);
+    const [like, setLike] = useState(false);
+
+    useEffect(() => {
+        setLike(isLiked)
+    }, [isLiked]);
 
     /**
      * handle like button click

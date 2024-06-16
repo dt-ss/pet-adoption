@@ -52,7 +52,7 @@ export const MainPage = () => {
                     && (!petType || petType === PetType[p.typeId])
                 ).map(elem => (
                     <Grid item sm={12} md={6} lg={4} xl={3} key={elem.id}>
-                        <PetCard isSaved={!!savedPets.filter(e => e.petId === elem.id).length} pet={elem}/>
+                        <PetCard isLiked={!!savedPets.filter(e => e.petId === elem.id).length} pet={elem}/>
                     </Grid>
                 ))}
             </Grid>

@@ -58,12 +58,11 @@ function App() {
                         {/* all routes except login - protected */}
                         <Route element={<ProtectedRoute/>}>
                             <Route path="/pet/:id" element={<PetProfilePage/>}/>
-                            <Route path="/user/:id" element={<UserProfilePage/>}/>
                             <Route path="/register-pet" element={<PetRegistrationPage/>}/>
                         </Route>
                         {/* signin route */}
                         <Route path="/signin" element={<SignInPage/>}/>
-                        <Route path="/signup" element={<UserProfilePage/>}/>
+                        <Route path="/user" element={<UserProfilePage/>}/>
                         {/* default route - main */}
                         <Route
                             path="*"

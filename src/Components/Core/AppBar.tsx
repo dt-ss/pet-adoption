@@ -145,7 +145,7 @@ function ResponsiveAppBar() {
 
     const handleCloseUserMenu = (setting?: string) => {
         if (setting === 'Logout') setUser(null);
-        if (setting === 'Profile' && user) navigate(`/user/${user.id}`);
+        if (setting === 'Profile' || setting === 'Register') navigate(`/user`);
         if (setting === 'Login') navigate(`/signin`);
         setAnchorElUser(null);
     };
@@ -328,7 +328,7 @@ function ResponsiveAppBar() {
                             open={Boolean(anchorElUser)}
                             onClose={() => handleCloseUserMenu()}
                         >
-                            {(user ? ['Profile', 'Logout'] : ['Login']).map((setting) => (
+                            {(user ? ['Profile', 'Logout'] : ['Login', 'Register']).map((setting) => (
                                 <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                     <Typography textAlign="center">{setting.toUpperCase()}</Typography>
                                 </MenuItem>

@@ -2,8 +2,6 @@ import React, {useState} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -144,12 +142,6 @@ export function SignInPage() {
                             autoComplete="current-password"
                         />
 
-                        {/* checkbox */}
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary"/>}
-                            label="Remember me"
-                        />
-
                         {/* sign in button */}
                         <Button
                             type="submit"
@@ -164,7 +156,7 @@ export function SignInPage() {
                         {/* forgot and signup buttons */}
                         <Grid container>
                             <Grid item>
-                                <Link component={RouterLink} variant={"body2"} to="/signup">
+                                <Link component={RouterLink} variant={"body2"} to="/user">
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

@@ -54,9 +54,9 @@ function App() {
                     {/* show top bar - only in non-login pages */}
                     <ResponsiveAppBar/>
                     {<Routes>
-                        <Route path="/" element={<MainPage/>}/>
                         {/* all routes except login - protected */}
                         <Route element={<ProtectedRoute/>}>
+                            <Route path="/" element={<MainPage/>}/>
                             <Route path="/pet/:id" element={<PetProfilePage/>}/>
                             <Route path="/register-pet" element={<PetRegistrationPage/>}/>
                         </Route>

@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import dogs from 'Pictures/image-dog-login.jpg';
-import {userAtom} from "Atoms";
+import {userAtom, skipLoginAtom} from "Atoms";
 import {useAtom} from "jotai";
 import {request, validateEmail} from "utils";
 import {Copyright} from "../Core/Copyright";
@@ -24,6 +24,7 @@ import {useNavigate, useLocation, Link as RouterLink} from "react-router-dom";
 export function SignInPage() {
 
     const [, setUser] = useAtom(userAtom);
+    const [, setSkipLogin] = useAtom(skipLoginAtom);
     const [emailValid, setEmailValid] = useState(false);
     const [passwordValid, setPasswordValid] = useState(false);
     const navigate = useNavigate();
@@ -32,14 +33,15 @@ export function SignInPage() {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        try{
+        try {
             const r = await request(`users/login/${data.get("email")}?password=${data.get("password")}`)
-            if(!r.ok) {throw new Error()}
+            if (!r.ok) {
+                throw new Error()
+            }
             setUser(await r.json());
             navigate(location.state?.from?.pathname || "/")
-        }
-        catch {
-             alert("Email or password invalid")
+        } catch {
+            alert("Email or password invalid")
         }
     };
 
@@ -153,11 +155,23 @@ export function SignInPage() {
                             Sign In
                         </Button>
 
-                        {/* forgot and signup buttons */}
+                        {/* signup  / skip buttons */}
                         <Grid container>
-                            <Grid item>
+
+                            {/* sign up button */}
+                            <Grid item xs>
                                 <Link component={RouterLink} variant={"body2"} to="/user">
                                     {"Don't have an account? Sign Up"}
+                                </Link>
+                            </Grid>
+
+                            {/* skip button */}
+                            <Grid item>
+                                <Link sx={{cursor:"pointer"}} color={'secondary'} variant={'body2'} onClick={() => {
+                                    setSkipLogin(true)
+                                    navigate('/')
+                                }}>
+                                    {"Skip for now"}
                                 </Link>
                             </Grid>
                         </Grid>

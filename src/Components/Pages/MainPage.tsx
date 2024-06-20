@@ -7,8 +7,6 @@ import {request} from "../../utils";
 import {SavedPet} from "../../Model/SavedPet";
 import {useAtom} from "jotai/index";
 import {userAtom} from "../../Atoms";
-import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled';
-import {Box} from "@mui/material";
 import {Pets} from "@mui/icons-material";
 
 /**
@@ -18,7 +16,7 @@ import {Pets} from "@mui/icons-material";
 export const MainPage = () => {
 
     const [searchParams] = useSearchParams();
-    const query = searchParams.get('query');
+    const name = searchParams.get('name');
     const minAge = searchParams.get('minAge');
     const maxAge = searchParams.get('maxAge');
     const petType = searchParams.get('petType');
@@ -29,16 +27,15 @@ export const MainPage = () => {
 
     // pull pets and saved pets lists from server
     useEffect(() => {
-        const p =
-            `pets/filter?${query ? `&name=${query}` : ``}${minAge ? `&minAge=${minAge}` : ``}${maxAge ? `&maxAge=${maxAge}` : ``}${petType ? `&typeId=${petType}` : ``}`
-        request(p).then(r => r.json().then(d => {
+        // pull pets by search query parameters
+        request(`pets/filter?${name ? `&name=${name}` : ``}${minAge ? `&minAge=${minAge}` : ``}${maxAge ? `&maxAge=${maxAge}` : ``}${petType ? `&typeId=${petType}` : ``}`).then(r => r.json().then(d => {
             setPets(d);
             user ? request(`savedPets/user/${user?.id}`).then(r => r.json().then(d => {
                 setSavedPets(d)
                 setLoading(false)
             })) : setLoading(false)
         }))
-    }, [user, query, minAge, maxAge, petType])
+    }, [user, name, minAge, maxAge, petType])
 
     return (loading ? <></> :
             <Grid
@@ -54,6 +51,7 @@ export const MainPage = () => {
                         <PetCard isLiked={!!savedPets.filter(e => e.petId === elem.id).length} pet={elem}/>
                     </Grid>
                 )) :
+                    // show no pets found image
                     <Grid item sx={{textAlign: "center"}} sm={12}>
                         <Pets sx={{fontSize: "20rem"}}/>
                         <h1>No pets found</h1>

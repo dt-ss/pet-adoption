@@ -160,7 +160,7 @@ function ResponsiveAppBar() {
 
     const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        navigate(`/?query=${search}&minAge=${ageRange[0]}&maxAge=${ageRange[1]}&petType=${petType}`);
+        navigate(`/?name=${search}&minAge=${ageRange[0]}&maxAge=${ageRange[1]}&petType=${petType}`);
     };
 
     const handleAgeRangeChange = (event: Event, newValue: number | number[]) => {

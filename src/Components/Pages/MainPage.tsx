@@ -7,7 +7,9 @@ import {request} from "../../utils";
 import {SavedPet} from "../../Model/SavedPet";
 import {useAtom} from "jotai/index";
 import {userAtom} from "../../Atoms";
-
+import HourglassDisabledIcon from '@mui/icons-material/HourglassDisabled';
+import {Box} from "@mui/material";
+import {Pets} from "@mui/icons-material";
 
 /**
  * main page component
@@ -28,12 +30,7 @@ export const MainPage = () => {
     // pull pets and saved pets lists from server
     useEffect(() => {
         const p =
-            `pets/filter?
-            ${query ? `&name=${query}` : ``}
-            ${minAge ? `&minAge=${minAge}` : ``}
-            ${maxAge ? `&maxAge=${maxAge}` : ``}
-            ${petType ? `&typeId=${petType}` : ``}`
-        console.log(p)
+            `pets/filter?${query ? `&name=${query}` : ``}${minAge ? `&minAge=${minAge}` : ``}${maxAge ? `&maxAge=${maxAge}` : ``}${petType ? `&typeId=${petType}` : ``}`
         request(p).then(r => r.json().then(d => {
             setPets(d);
             user ? request(`savedPets/user/${user?.id}`).then(r => r.json().then(d => {
@@ -52,11 +49,16 @@ export const MainPage = () => {
                 justifyContent={'space-between'}
             >
                 {/* show filtered pet cards */}
-                {pets.map(elem => (
+                {pets.length? pets.map(elem => (
                     <Grid item sm={12} md={6} lg={4} xl={3} key={elem.id}>
                         <PetCard isLiked={!!savedPets.filter(e => e.petId === elem.id).length} pet={elem}/>
                     </Grid>
-                ))}
+                )) :
+                    <Grid item sx={{textAlign: "center"}} sm={12}>
+                        <Pets sx={{fontSize: "20rem"}}/>
+                        <h1>No pets found</h1>
+                        <h4>You may add new pets or broaden search parameters</h4>
+                    </Grid>}
             </Grid>
     )
 }

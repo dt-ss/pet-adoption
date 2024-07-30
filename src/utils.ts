@@ -1,4 +1,6 @@
 const API_PORT = 8080
+export const MIN_NAME_LEN = 2
+export const MAX_NAME_LEN = 80
 
 /**
  * code to validated string entered is a valid email by REGEX

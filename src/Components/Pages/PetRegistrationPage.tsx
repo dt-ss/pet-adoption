@@ -6,7 +6,7 @@ import {useDropzone} from 'react-dropzone';
 import {PetModel, PetType} from "../../Model/PetModel";
 import {useAtom} from "jotai";
 import {userAtom} from "../../Atoms";
-import {enumToObject, request} from "../../utils";
+import {enumToObject, MAX_NAME_LEN, MIN_NAME_LEN, request} from "../../utils";
 import {Delete} from "@mui/icons-material";
 
 // pet type object to be used at dropdown
@@ -99,9 +99,9 @@ const PetRegistrationPage = ({currentPet = {typeId: PetType.Other}}: { currentPe
     useEffect(() => {
         setError(last => ({
             ...last,
-            description: !("description" in pet && pet.description && pet.description.length > 2)
+            description: !("description" in pet && pet.description && pet.description.length > MIN_NAME_LEN)
         }))
-        setError(last => ({...last, name: !("name" in pet && pet.name && pet.name.length > 2)}))
+        setError(last => ({...last, name: !("name" in pet && pet.name && pet.name.length > MIN_NAME_LEN && pet.name.length <= MAX_NAME_LEN)}))
         setError(last => ({...last, birthDate: !("birthDate" in pet && pet.birthDate && pet.birthDate.length)}))
         setError(last => ({...last, image: !("image" in pet && pet.image && pet.image.length)}))
         setError(last => ({...last, typeId: !("typeId" in pet && pet.typeId)}))

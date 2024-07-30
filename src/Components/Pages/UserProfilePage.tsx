@@ -8,6 +8,7 @@ import {request, validateEmail} from "../../utils";
 import {useNavigate} from "react-router-dom";
 import {PetModel} from "../../Model/PetModel";
 import {SavedPet} from "../../Model/SavedPet";
+import {MIN_NAME_LEN, MAX_NAME_LEN} from "../../utils";
 
 /**
  * user profile page - registration or profile edit
@@ -33,8 +34,8 @@ const UserProfilePage: React.FC = () => {
     const validateFields = (data: any) => {
         setUserError(last => ({...last, email: !data.email || !validateEmail(data.email)}));
         setUserError(last => ({...last, password: !data.password || data.password.length <= 7}));
-        setUserError(last => ({...last, firstName: !data.firstName || data.firstName.length <= 2}));
-        setUserError(last => ({...last, lastName: !data.lastName || data.lastName.length <= 2}));
+        setUserError(last => ({...last, firstName: !data.firstName || data.firstName.length <= MIN_NAME_LEN || data.firstName.length > MAX_NAME_LEN}));
+        setUserError(last => ({...last, lastName: !data.lastName || data.lastName.length <= MIN_NAME_LEN || data.lastName.length > MAX_NAME_LEN}));
         setUserError(last => ({...last, phone: !data.phone || isNaN(Number(data.phone)) || data.phone.length !== 10}));
         setUserError(last => ({...last, address: !data.address}));
     };

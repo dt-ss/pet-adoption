@@ -169,6 +169,7 @@ export function SignInPage() {
                             <Grid item>
                                 <Link sx={{cursor:"pointer"}} color={'secondary'} variant={'body2'} onClick={() => {
                                     setSkipLogin(true)
+                                    setUser(null)
                                     navigate('/')
                                 }}>
                                     {"Skip for now"}
